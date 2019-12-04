@@ -4,7 +4,7 @@
 	"version": "${project.version}",
 	"timestamp": "${project.timestamp}",
 	"packaging": "mod",
-	"iconUri": "https://www.avereon.com/download/latest/mazer/product/icon",
+	"iconUri": "mazer",
 	"name": "${project.name}",
 	"provider": "${project.organization.name}",
 	"providerUrl": "${project.organization.url}",
