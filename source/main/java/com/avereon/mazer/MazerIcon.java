@@ -23,8 +23,6 @@ public class MazerIcon extends ProgramIcon {
 
 		double start = 1.5* mouthAngle  * RADIANS_PER_DEGREE;
 		double end = (360 - 1.5 * mouthAngle)  * RADIANS_PER_DEGREE;
-		System.out.println( start );
-		System.out.println( end );
 		for( double a = start; a < end; a += pie ) {
 			double n = 0.33 + 0.67 * RANDOM.nextDouble();
 			double x = r * Math.cos( a ) * n;
@@ -47,6 +45,7 @@ public class MazerIcon extends ProgramIcon {
 	}
 
 	public static void main( String[] args ) {
+		save( new MazerIcon(), "target/icons/mazer.png" );
 		proof( new MazerIcon() );
 		wrapup();
 	}
