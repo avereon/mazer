@@ -6,22 +6,18 @@ public class Mazer extends Mod {
 
 	@Override
 	public void register() {
-		super.register();
 		getProgram().getIconLibrary().register( "mazer", MazerIcon.class );
 	}
 
 	@Override
-	public void startup() {
-		super.startup();
-	}
+	public void startup() {}
 
 	@Override
-	public void shutdown() {
-		super.shutdown();
-	}
+	public void shutdown() {}
 
 	@Override
 	public void unregister() {
-		super.unregister();
+		getProgram().getIconLibrary().unregister( "mazer", MazerIcon.class );
 	}
+
 }
