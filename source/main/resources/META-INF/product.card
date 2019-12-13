@@ -5,6 +5,7 @@
 	"timestamp": "${project.timestamp}",
 	"packaging": "mod",
 	"iconUri": "mazer",
+	"icons": [ "mazer", "https://avereon.com/download/latest/mazer/product/icon" ],
 	"name": "${project.name}",
 	"provider": "${project.organization.name}",
 	"providerUrl": "${project.organization.url}",
