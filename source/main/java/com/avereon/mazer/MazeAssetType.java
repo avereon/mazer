@@ -22,4 +22,5 @@ public class MazeAssetType extends AssetType {
 	public boolean assetDialog( Program program, Asset asset ) throws AssetException {
 		return super.assetDialog( program, asset );
 	}
+
 }
