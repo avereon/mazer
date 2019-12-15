@@ -1,4 +1,5 @@
 module com.avereon.mazer {
+	requires com.avereon.venza;
 	requires com.avereon.xenon;
 	requires com.avereon.zevra;
 	requires javafx.graphics;
