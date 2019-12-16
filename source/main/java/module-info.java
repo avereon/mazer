@@ -1,8 +1,8 @@
 module com.avereon.mazer {
-	requires com.avereon.venza;
 	requires com.avereon.xenon;
-	requires com.avereon.zevra;
-	requires javafx.graphics;
+	requires transitive com.avereon.venza;
+	requires transitive com.avereon.zevra;
+	requires transitive javafx.graphics;
 
 	exports com.avereon.mazer to com.avereon.xenon;
 
