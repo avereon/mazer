@@ -4,6 +4,8 @@ module com.avereon.mazer {
 	requires transitive com.avereon.zevra;
 	requires transitive javafx.graphics;
 
+	opens com.avereon.mazer.bundles;
+
 	exports com.avereon.mazer to com.avereon.xenon;
 
 	provides com.avereon.xenon.Mod with com.avereon.mazer.Mazer;
