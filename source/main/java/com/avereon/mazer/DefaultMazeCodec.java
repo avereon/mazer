@@ -18,12 +18,12 @@ public class DefaultMazeCodec extends Codec {
 
 	@Override
 	public String getKey() {
-		return "com.avereon.mazer.codec.default";
+		return "com.avereon.mazer.codec.maze";
 	}
 
 	@Override
 	public String getName() {
-		return product.rb().text( "mazer", "codec.default.name" );
+		return product.rb().text( "asset", "codec-maze-name" );
 	}
 
 	@Override
