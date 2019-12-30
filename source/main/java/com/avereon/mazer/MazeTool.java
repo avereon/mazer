@@ -5,6 +5,7 @@ import com.avereon.xenon.OpenToolRequestParameters;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.AssetEvent;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
@@ -16,7 +17,15 @@ public class MazeTool extends ProgramTool {
 
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
+		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
+
+		asset.getEventBus().register( AssetEvent.ACTIVATED, e -> {
+			getProgram().getActionLibrary().getAction( "properties" ).pushAction( mazePropertiesAction );
+		} );
+		asset.getEventBus().register( AssetEvent.DEACTIVATED, e -> {
+			getProgram().getActionLibrary().getAction( "properties" ).pullAction( mazePropertiesAction );
+		} );
 	}
 
 	@Override
