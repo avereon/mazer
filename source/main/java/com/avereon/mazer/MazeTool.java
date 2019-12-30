@@ -1,5 +1,6 @@
 package com.avereon.mazer;
 
+import com.avereon.event.EventHandler;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.OpenToolRequestParameters;
 import com.avereon.xenon.Program;
@@ -15,17 +16,17 @@ public class MazeTool extends ProgramTool {
 
 	private MazePropertiesAction mazePropertiesAction;
 
+	private EventHandler<AssetEvent> assetActivatedHandler;
+
+	private EventHandler<AssetEvent> assetDeactivatedHandler;
+
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
 
-		asset.getEventBus().register( AssetEvent.ACTIVATED, e -> {
-			getProgram().getActionLibrary().getAction( "properties" ).pushAction( mazePropertiesAction );
-		} );
-		asset.getEventBus().register( AssetEvent.DEACTIVATED, e -> {
-			getProgram().getActionLibrary().getAction( "properties" ).pullAction( mazePropertiesAction );
-		} );
+		assetActivatedHandler = e -> getProgram().getActionLibrary().getAction( "properties" ).pushAction( mazePropertiesAction );
+		assetDeactivatedHandler = e-> getProgram().getActionLibrary().getAction( "properties" ).pullAction( mazePropertiesAction );
 	}
 
 	@Override
@@ -37,13 +38,15 @@ public class MazeTool extends ProgramTool {
 	}
 
 	@Override
-	protected void activate() {
-		getProgram().getActionLibrary().getAction( "properties" ).pushAction( mazePropertiesAction );
+	protected void allocate() throws ToolException {
+		getAsset().getEventBus().register( AssetEvent.ACTIVATED, assetActivatedHandler );
+		getAsset().getEventBus().register( AssetEvent.DEACTIVATED, assetDeactivatedHandler );
 	}
 
 	@Override
-	protected void conceal() {
-		getProgram().getActionLibrary().getAction( "properties" ).pullAction( mazePropertiesAction );
+	protected void deallocate() throws ToolException {
+		getAsset().getEventBus().unregister( AssetEvent.ACTIVATED, assetActivatedHandler );
+		getAsset().getEventBus().unregister( AssetEvent.DEACTIVATED, assetDeactivatedHandler );
 	}
 
 	private static class MazePropertiesAction extends Action {
