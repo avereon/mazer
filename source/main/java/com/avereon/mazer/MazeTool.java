@@ -25,8 +25,8 @@ public class MazeTool extends ProgramTool {
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
 
-		assetActivatedHandler = e -> getProgram().getActionLibrary().getAction( "properties" ).pushAction( mazePropertiesAction );
-		assetDeactivatedHandler = e-> getProgram().getActionLibrary().getAction( "properties" ).pullAction( mazePropertiesAction );
+		assetActivatedHandler = e -> pushAction( "properties", mazePropertiesAction );
+		assetDeactivatedHandler = e -> pullAction( "properties", mazePropertiesAction );
 	}
 
 	@Override
@@ -47,6 +47,10 @@ public class MazeTool extends ProgramTool {
 	protected void deallocate() throws ToolException {
 		getAsset().getEventBus().unregister( AssetEvent.ACTIVATED, assetActivatedHandler );
 		getAsset().getEventBus().unregister( AssetEvent.DEACTIVATED, assetDeactivatedHandler );
+	}
+
+	private Maze getMaze() {
+		return (Maze)getAsset().getModel();
 	}
 
 	private static class MazePropertiesAction extends Action {
