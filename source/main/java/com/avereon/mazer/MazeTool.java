@@ -13,6 +13,7 @@ import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -46,13 +47,14 @@ public class MazeTool extends ProgramTool {
 		assetDeactivatedHandler = e -> pullAction( "properties", mazePropertiesAction );
 
 		grid = new GridPane();
+		grid.setAlignment( Pos.CENTER );
 		getChildren().addAll( grid );
 	}
 
 	@Override
 	protected void assetReady( OpenToolRequestParameters parameters ) throws ToolException {
 		super.assetReady( parameters );
-		setTitle( getAsset().getName() );
+		//setTitle( getAsset().getName() );
 
 		rebuildGrid();
 		assetRefreshed();
@@ -122,7 +124,7 @@ public class MazeTool extends ProgramTool {
 
 	private static class Space extends Region {
 
-		private static final Background DEFAULT = new Background( new BackgroundFill( Color.web( "#80808040" ), CornerRadii.EMPTY, Insets.EMPTY ) );
+		private static final Background DEFAULT = new Background( new BackgroundFill( Color.web( "#80808060" ), CornerRadii.EMPTY, Insets.EMPTY ) );
 
 		private static final Background HOLE = new Background( new BackgroundFill( Color.web( "#00000000" ), CornerRadii.EMPTY, Insets.EMPTY ) );
 
