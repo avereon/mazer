@@ -5,6 +5,7 @@ import com.avereon.xenon.Program;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetException;
 import com.avereon.xenon.asset.AssetType;
+import com.avereon.xenon.node.NodeEvent;
 
 public class MazeAssetType extends AssetType {
 
@@ -15,7 +16,11 @@ public class MazeAssetType extends AssetType {
 
 	@Override
 	public boolean assetInit( Program program, Asset asset ) throws AssetException {
-		asset.setModel( new Maze() );
+		Maze maze = new Maze();
+		maze.addNodeListener( e -> {
+			if( e.getType() == NodeEvent.Type.VALUE_CHANGED ) asset.refresh();
+		} );
+		asset.setModel( maze );
 		return true;
 	}
 
