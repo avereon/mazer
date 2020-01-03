@@ -10,7 +10,7 @@ public class MazeAssetType extends AssetType {
 
 	public MazeAssetType( Product product ) {
 		super( product, "mazer" );
-		setDefaultCodec( new DefaultMazeCodec( product ) );
+		setDefaultCodec( new MazeCodec( product ) );
 	}
 
 	@Override

@@ -54,7 +54,6 @@ public class MazeTool extends ProgramTool {
 	@Override
 	protected void assetReady( OpenToolRequestParameters parameters ) throws ToolException {
 		super.assetReady( parameters );
-		//setTitle( getAsset().getName() );
 
 		rebuildGrid();
 		assetRefreshed();
