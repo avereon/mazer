@@ -10,6 +10,7 @@ import com.avereon.xenon.asset.AssetEvent;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -50,24 +51,21 @@ public class MazeTool extends ProgramTool {
 		getChildren().addAll( grid );
 	}
 
-//	@Override
-//	protected void assetReady( OpenAssetRequest request ) throws ToolException {
-//		super.assetReady( request );
-//	}
-
 	@Override
 	protected void assetRefreshed() throws ToolException {
 		Maze maze = getMaze();
 		int width = maze.getWidth();
 		int height = maze.getHeight();
 
-		if( state == null || state.length != width || state[ 0 ].length != height ) rebuildGrid();
+		Platform.runLater( () -> {
+			if( state == null || state.length != width || state[ 0 ].length != height ) rebuildGrid();
 
-		for( int x = 0; x < width; x++ ) {
-			for( int y = 0; y < height; y++ ) {
-				state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( scale );
+			for( int x = 0; x < width; x++ ) {
+				for( int y = 0; y < height; y++ ) {
+					state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( scale );
+				}
 			}
-		}
+		} );
 	}
 
 	private void rebuildGrid() {
