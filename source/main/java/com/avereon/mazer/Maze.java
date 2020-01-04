@@ -50,6 +50,7 @@ public class Maze extends Node {
 		if( height < MIN_HEIGHT ) height = MIN_HEIGHT;
 		try {
 			Txn.create();
+			// FIXME This causes an NPE when loading
 			clear();
 			setValue( WIDTH, width );
 			setValue( HEIGHT, height );

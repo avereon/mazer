@@ -1,18 +1,24 @@
 package com.avereon.mazer;
 
 import com.avereon.product.Product;
+import com.avereon.util.LogUtil;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
+import org.slf4j.Logger;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
 public class MazeCodec extends Codec {
+
+	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
 	private Product product;
 
 	public MazeCodec( Product product ) {
 		this.product = product;
+		setDefaultExtension( "maze" );
 	}
 
 	@Override
@@ -37,6 +43,8 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void load( Asset asset, InputStream input ) throws IOException {
+		log.warn( "Loading maze: " + asset );
+
 		BufferedReader reader = new BufferedReader( new InputStreamReader( input, StandardCharsets.UTF_8 ) );
 
 		try {
@@ -66,6 +74,7 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void save( Asset asset, OutputStream output ) throws IOException {
+		log.warn( "Saving asset: " + asset  );
 		try {
 			Maze maze = asset.getModel();
 			int width = maze.getWidth();
