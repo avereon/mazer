@@ -3,7 +3,6 @@ package com.avereon.mazer;
 import com.avereon.event.EventHandler;
 import com.avereon.util.LogUtil;
 import com.avereon.xenon.Action;
-import com.avereon.xenon.OpenToolRequestParameters;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -51,12 +50,24 @@ public class MazeTool extends ProgramTool {
 		getChildren().addAll( grid );
 	}
 
-	@Override
-	protected void assetReady( OpenToolRequestParameters parameters ) throws ToolException {
-		super.assetReady( parameters );
+//	@Override
+//	protected void assetReady( OpenAssetRequest request ) throws ToolException {
+//		super.assetReady( request );
+//	}
 
-		rebuildGrid();
-		assetRefreshed();
+	@Override
+	protected void assetRefreshed() throws ToolException {
+		Maze maze = getMaze();
+		int width = maze.getWidth();
+		int height = maze.getHeight();
+
+		if( state == null || state.length != width || state[ 0 ].length != height ) rebuildGrid();
+
+		for( int x = 0; x < width; x++ ) {
+			for( int y = 0; y < height; y++ ) {
+				state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( scale );
+			}
+		}
 	}
 
 	private void rebuildGrid() {
@@ -69,19 +80,6 @@ public class MazeTool extends ProgramTool {
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
 				grid.add( state[ x ][ y ] = new Space( maze, x, y ), y, x );
-			}
-		}
-	}
-
-	@Override
-	protected void assetRefreshed() throws ToolException {
-		Maze maze = getMaze();
-
-		int rCount = maze.getWidth();
-		int cCount = maze.getHeight();
-		for( int x = 0; x < rCount; x++ ) {
-			for( int y = 0; y < cCount; y++ ) {
-				state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( scale );
 			}
 		}
 	}
@@ -150,7 +148,7 @@ public class MazeTool extends ProgramTool {
 						newState = 0;
 						break;
 					}
-					case 0 : {
+					case 0: {
 						newState = -1;
 						break;
 					}

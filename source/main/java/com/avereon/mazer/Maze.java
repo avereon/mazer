@@ -51,7 +51,7 @@ public class Maze extends Node {
 		try {
 			Txn.create();
 			// FIXME This causes an NPE when loading
-			clear();
+			//clear();
 			setValue( WIDTH, width );
 			setValue( HEIGHT, height );
 			Txn.commit();
