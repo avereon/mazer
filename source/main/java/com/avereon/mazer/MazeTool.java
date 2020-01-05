@@ -1,16 +1,14 @@
 package com.avereon.mazer;
 
-import com.avereon.event.EventHandler;
 import com.avereon.util.LogUtil;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
-import com.avereon.xenon.asset.AssetEvent;
+import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -24,31 +22,29 @@ public class MazeTool extends ProgramTool {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
-	private static final int DEFAULT_SCALE = 20;
+	private static final int DEFAULT_ZOOM = 20;
 
 	private MazePropertiesAction mazePropertiesAction;
-
-	private EventHandler<AssetEvent> assetActivatedHandler;
-
-	private EventHandler<AssetEvent> assetDeactivatedHandler;
 
 	private GridPane grid;
 
 	private Space[][] state;
 
-	private int scale = DEFAULT_SCALE;
+	private int zoom = DEFAULT_ZOOM;
 
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
 
-		assetActivatedHandler = e -> pushAction( "properties", mazePropertiesAction );
-		assetDeactivatedHandler = e -> pullAction( "properties", mazePropertiesAction );
-
 		grid = new GridPane();
 		grid.setAlignment( Pos.CENTER );
 		getChildren().addAll( grid );
+	}
+
+	@Override
+	protected void assetReady( OpenAssetRequest request ) throws ToolException {
+		assetRefreshed();
 	}
 
 	@Override
@@ -57,15 +53,13 @@ public class MazeTool extends ProgramTool {
 		int width = maze.getWidth();
 		int height = maze.getHeight();
 
-		Platform.runLater( () -> {
-			if( state == null || state.length != width || state[ 0 ].length != height ) rebuildGrid();
+		if( state == null || state.length != width || state[ 0 ].length != height ) rebuildGrid();
 
-			for( int x = 0; x < width; x++ ) {
-				for( int y = 0; y < height; y++ ) {
-					state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( scale );
-				}
+		for( int x = 0; x < width; x++ ) {
+			for( int y = 0; y < height; y++ ) {
+				state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( zoom );
 			}
-		} );
+		}
 	}
 
 	private void rebuildGrid() {
@@ -83,21 +77,21 @@ public class MazeTool extends ProgramTool {
 	}
 
 	@Override
-	protected void allocate() throws ToolException {
-		getAsset().getEventBus().register( AssetEvent.ACTIVATED, assetActivatedHandler );
-		getAsset().getEventBus().register( AssetEvent.DEACTIVATED, assetDeactivatedHandler );
+	protected void activate() throws ToolException {
+		pushAction( "properties", mazePropertiesAction );
 	}
 
 	@Override
-	protected void deallocate() throws ToolException {
-		getAsset().getEventBus().unregister( AssetEvent.ACTIVATED, assetActivatedHandler );
-		getAsset().getEventBus().unregister( AssetEvent.DEACTIVATED, assetDeactivatedHandler );
+	protected void conceal() throws ToolException {
+		pullAction( "properties", mazePropertiesAction );
 	}
 
 	private Maze getMaze() {
 		return (Maze)getAsset().getModel();
 	}
 
+	// TODO Since this is more of an asset action and not a tool action it may
+	// be more appropriate to move this to the asset manager.
 	private static class MazePropertiesAction extends Action {
 
 		private MazePropertiesAction( Program program ) {
