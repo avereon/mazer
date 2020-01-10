@@ -60,27 +60,17 @@ public class Maze extends Node {
 	}
 
 	public int getCellState( int x, int y ) {
-		Column column = getValue( String.valueOf( x ) );
-		return column == null ? 0 : column.getValue( y );
+		return getValue( "cell-" + x + "-" + y, 0 );
 	}
 
 	void setCellState( int x, int y, int state ) {
-		Column column = getValue( String.valueOf( x ) );
-		if( column == null ) setValue( String.valueOf( x ), column = new Column() );
-		column.setValue( y, state );
+		setValue( "cell-" + x + "-" + y, state );
 	}
 
-	private static class Column extends Node {
-
-		public int getValue( int index ) {
-			Integer value = getValue( String.valueOf( index ) );
-			return value == null ? 0 : value;
-		}
-
-		public void setValue( int index, int state ) {
-			setValue( String.valueOf( index ), state );
-		}
-
-	}
+	//	@Override
+	//	public void dispatchEvent( NodeEvent event ) {
+	//		super.dispatchEvent( event );
+	//		log.warn( "Maze " + event.getType() + ": " + event.getNode() );
+	//	}
 
 }

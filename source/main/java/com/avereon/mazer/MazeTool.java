@@ -71,7 +71,7 @@ public class MazeTool extends ProgramTool {
 		state = new Space[ width ][ height ];
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				grid.add( state[ x ][ y ] = new Space( maze, x, y ), y, x );
+				grid.add( state[ x ][ y ] = new Space( maze, x, y ), x, y );
 			}
 		}
 	}
