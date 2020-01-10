@@ -3,6 +3,7 @@ package com.avereon.mazer;
 import com.avereon.util.LogUtil;
 import com.avereon.xenon.node.Node;
 import com.avereon.xenon.transaction.Txn;
+import com.avereon.xenon.transaction.TxnEvent;
 import org.slf4j.Logger;
 
 import java.lang.invoke.MethodHandles;
@@ -59,7 +60,7 @@ public class Maze extends Node {
 		}
 	}
 
-	public int getCellState( int x, int y ) {
+	int getCellState( int x, int y ) {
 		return getValue( "cell-" + x + "-" + y, 0 );
 	}
 
@@ -67,10 +68,15 @@ public class Maze extends Node {
 		setValue( "cell-" + x + "-" + y, state );
 	}
 
-	//	@Override
-	//	public void dispatchEvent( NodeEvent event ) {
-	//		super.dispatchEvent( event );
-	//		log.warn( "Maze " + event.getType() + ": " + event.getNode() );
-	//	}
+	@Override
+	public void handle( TxnEvent event ) {
+		//log.warn( "Maze " + event );
+		super.handle( event );
+	}
+
+	@Override
+	public String toString() {
+		return super.toString( "width", "height" );
+	}
 
 }
