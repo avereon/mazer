@@ -11,6 +11,12 @@ public class Maze extends Node {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
+	public static final int MONSTER = -2;
+
+	public static final int DEFAULT = -1;
+
+	public static final int HOLE = Integer.MAX_VALUE;
+
 	private static final String WIDTH = "width";
 
 	private static final String HEIGHT = "height";
@@ -22,6 +28,12 @@ public class Maze extends Node {
 	private static final int DEFAULT_WIDTH = 10;
 
 	private static final int DEFAULT_HEIGHT = 10;
+
+	private int x;
+
+	private int y;
+
+	private Direction direction;
 
 	public Maze() {
 		setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );
@@ -59,8 +71,29 @@ public class Maze extends Node {
 		}
 	}
 
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setCookie( int x, int y ) {
+		this.x = x;
+		this.y = y;
+	}
+
+	public void setDirection( Direction direction ) {
+		this.direction = direction;
+	}
+
 	public int getCellState( int x, int y ) {
 		return getValue( "cell-" + x + "-" + y, 0 );
+	}
+
+	public void incrementSteps() {
+
 	}
 
 	void setCellState( int x, int y, int state ) {

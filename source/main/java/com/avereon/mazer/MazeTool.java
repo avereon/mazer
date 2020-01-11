@@ -17,12 +17,16 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MazeTool extends ProgramTool {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
 	private static final int DEFAULT_ZOOM = 20;
+
+	private static Map<Integer, Background> backgrounds;
 
 	private MazePropertiesAction mazePropertiesAction;
 
@@ -31,6 +35,12 @@ public class MazeTool extends ProgramTool {
 	private Space[][] state;
 
 	private int zoom = DEFAULT_ZOOM;
+
+	static {
+		backgrounds = new HashMap<>();
+		backgrounds.put( Maze.DEFAULT, createBackground( "#80808060" ) );
+		backgrounds.put( Maze.HOLE, createBackground( "#00000000" ) );
+	}
 
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -111,6 +121,10 @@ public class MazeTool extends ProgramTool {
 
 	}
 
+	private static Background createBackground( String color ) {
+		return new Background( new BackgroundFill( Color.web( color ), CornerRadii.EMPTY, Insets.EMPTY ) );
+	}
+
 	private static class Space extends Region {
 
 		private static final Background DEFAULT = new Background( new BackgroundFill( Color.web( "#80808060" ), CornerRadii.EMPTY, Insets.EMPTY ) );
@@ -135,16 +149,15 @@ public class MazeTool extends ProgramTool {
 
 			setOnMousePressed( e -> {
 				int newState = state;
-				switch( state ) {
-					case -1: {
-						newState = 0;
-						break;
-					}
-					case 0: {
-						newState = -1;
-						break;
-					}
+
+				if( e.isShiftDown() ) {
+					// Place the cookie
+				} else if( e.isControlDown() ) {
+					newState = Maze.HOLE;
+				} else {
+					newState = Maze.DEFAULT;
 				}
+
 				maze.setCellState( x, y, newState );
 			} );
 		}
@@ -165,17 +178,7 @@ public class MazeTool extends ProgramTool {
 
 		public Space setState( int state ) {
 			this.state = state;
-
-			switch( state ) {
-				case 0: {
-					setBackground( DEFAULT );
-					break;
-				}
-				case -1: {
-					setBackground( HOLE );
-					break;
-				}
-			}
+			setBackground( backgrounds.get( state ) );
 			return this;
 		}
 
