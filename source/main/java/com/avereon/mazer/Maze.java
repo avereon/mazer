@@ -11,11 +11,11 @@ public class Maze extends Node {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
-	public static final int MONSTER = -2;
+	public static final int DEFAULT = 0;
 
-	public static final int DEFAULT = -1;
+	public static final int MONSTER = -1;
 
-	public static final int HOLE = Integer.MAX_VALUE;
+	public static final int HOLE = Integer.MIN_VALUE;
 
 	private static final String WIDTH = "width";
 
@@ -35,8 +35,12 @@ public class Maze extends Node {
 
 	private Direction direction;
 
+	private int steps;
+
 	public Maze() {
 		setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );
+		setDirection( Direction.EAST );
+		setCookie( 1, 1 );
 	}
 
 	public int getWidth() {
@@ -84,20 +88,28 @@ public class Maze extends Node {
 		this.y = y;
 	}
 
+	public Direction getDirection() {
+		return direction;
+	}
+
 	public void setDirection( Direction direction ) {
 		this.direction = direction;
 	}
 
 	public int getCellState( int x, int y ) {
-		return getValue( "cell-" + x + "-" + y, 0 );
-	}
-
-	public void incrementSteps() {
-
+		return getValue( "cell-" + x + "-" + y, Maze.DEFAULT );
 	}
 
 	void setCellState( int x, int y, int state ) {
 		setValue( "cell-" + x + "-" + y, state );
+	}
+
+	public int getStepCount() {
+		return steps;
+	}
+
+	public void incrementSteps() {
+		steps++;
 	}
 
 	//	@Override

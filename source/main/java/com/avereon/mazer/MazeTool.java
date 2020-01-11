@@ -32,13 +32,14 @@ public class MazeTool extends ProgramTool {
 
 	private GridPane grid;
 
-	private Space[][] state;
+	private Cell[][] cells;
 
 	private int zoom = DEFAULT_ZOOM;
 
 	static {
 		backgrounds = new HashMap<>();
-		backgrounds.put( Maze.DEFAULT, createBackground( "#80808060" ) );
+		backgrounds.put( Maze.DEFAULT, createBackground( "#80808080" ) );
+		backgrounds.put( Maze.MONSTER, createBackground( "#008000C0" ) );
 		backgrounds.put( Maze.HOLE, createBackground( "#00000000" ) );
 	}
 
@@ -63,11 +64,11 @@ public class MazeTool extends ProgramTool {
 		int width = maze.getWidth();
 		int height = maze.getHeight();
 
-		if( state == null || state.length != width || state[ 0 ].length != height ) rebuildGrid();
+		if( cells == null || cells.length != width || cells[ 0 ].length != height ) rebuildGrid();
 
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( zoom );
+				cells[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( zoom );
 			}
 		}
 	}
@@ -78,10 +79,10 @@ public class MazeTool extends ProgramTool {
 		Maze maze = getMaze();
 		int width = maze.getWidth();
 		int height = maze.getHeight();
-		state = new Space[ width ][ height ];
+		cells = new Cell[ width ][ height ];
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				grid.add( state[ x ][ y ] = new Space( maze, x, y ), x, y );
+				grid.add( cells[ x ][ y ] = new Cell( maze, x, y ), x, y );
 			}
 		}
 	}
@@ -125,11 +126,7 @@ public class MazeTool extends ProgramTool {
 		return new Background( new BackgroundFill( Color.web( color ), CornerRadii.EMPTY, Insets.EMPTY ) );
 	}
 
-	private static class Space extends Region {
-
-		private static final Background DEFAULT = new Background( new BackgroundFill( Color.web( "#80808060" ), CornerRadii.EMPTY, Insets.EMPTY ) );
-
-		private static final Background HOLE = new Background( new BackgroundFill( Color.web( "#00000000" ), CornerRadii.EMPTY, Insets.EMPTY ) );
+	private static class Cell extends Region {
 
 		private Maze maze;
 
@@ -141,11 +138,11 @@ public class MazeTool extends ProgramTool {
 
 		private int state;
 
-		public Space( Maze maze, int x, int y ) {
+		public Cell( Maze maze, int x, int y ) {
 			this.maze = maze;
 			this.x = x;
 			this.y = y;
-			setBackground( HOLE );
+			setBackground( backgrounds.get( Maze.DEFAULT ) );
 
 			setOnMousePressed( e -> {
 				int newState = state;
@@ -166,7 +163,7 @@ public class MazeTool extends ProgramTool {
 			return size;
 		}
 
-		public Space setSize( int size ) {
+		public Cell setSize( int size ) {
 			setPrefSize( size, size );
 			this.size = size;
 			return this;
@@ -176,8 +173,9 @@ public class MazeTool extends ProgramTool {
 			return this.state;
 		}
 
-		public Space setState( int state ) {
+		public Cell setState( int state ) {
 			this.state = state;
+			if( state > Maze.DEFAULT ) state = Maze.DEFAULT;
 			setBackground( backgrounds.get( state ) );
 			return this;
 		}
