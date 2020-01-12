@@ -48,7 +48,7 @@ public class MazeCodec extends Codec {
 		BufferedReader reader = new BufferedReader( new InputStreamReader( input, StandardCharsets.UTF_8 ) );
 
 		try {
-			Maze maze = new Maze();
+			Maze maze = asset.getModel();
 
 			String line;
 			while( (line = reader.readLine()) != null ) {

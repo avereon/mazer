@@ -7,7 +7,7 @@ public enum Direction {
 			for( int index = 0; index < steps; index++ ) {
 				if( !isFrontClear( model ) ) throw new MoveException();
 				model.setCookie( model.getX(), model.getY() - 1 );
-				model.incrementSteps();
+				model.incrementStepCount();
 			}
 		}
 
@@ -60,7 +60,7 @@ public enum Direction {
 			for( int index = 0; index < steps; index++ ) {
 				if( !isFrontClear( model ) ) throw new MoveException();
 				model.setCookie( model.getX() + 1, model.getY() );
-				model.incrementSteps();
+				model.incrementStepCount();
 			}
 		}
 
@@ -113,7 +113,7 @@ public enum Direction {
 			for( int index = 0; index < steps; index++ ) {
 				if( !isFrontClear( model ) ) throw new MoveException();
 				model.setCookie( model.getX(), model.getY() + 1 );
-				model.incrementSteps();
+				model.incrementStepCount();
 			}
 		}
 
@@ -165,7 +165,7 @@ public enum Direction {
 			for( int index = 0; index < steps; index++ ) {
 				if( !isFrontClear( model ) ) throw new MoveException();
 				model.setCookie( model.getX() - 1, model.getY() );
-				model.incrementSteps();
+				model.incrementStepCount();
 			}
 		}
 

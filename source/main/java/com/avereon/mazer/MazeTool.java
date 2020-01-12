@@ -38,8 +38,9 @@ public class MazeTool extends ProgramTool {
 
 	static {
 		backgrounds = new HashMap<>();
+		backgrounds.put( Maze.COOKIE, createBackground( "#80600080" ) );
 		backgrounds.put( Maze.DEFAULT, createBackground( "#80808080" ) );
-		backgrounds.put( Maze.MONSTER, createBackground( "#008000C0" ) );
+		backgrounds.put( Maze.MONSTER, createBackground( "#800000C0" ) );
 		backgrounds.put( Maze.HOLE, createBackground( "#00000000" ) );
 	}
 
@@ -71,6 +72,8 @@ public class MazeTool extends ProgramTool {
 				cells[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( zoom );
 			}
 		}
+
+		cells[ maze.getX() ][ maze.getY() ].setState( Maze.COOKIE );
 	}
 
 	private void rebuildGrid() {
@@ -145,17 +148,22 @@ public class MazeTool extends ProgramTool {
 			setBackground( backgrounds.get( Maze.DEFAULT ) );
 
 			setOnMousePressed( e -> {
-				int newState = state;
 
-				if( e.isShiftDown() ) {
-					// Place the cookie
-				} else if( e.isControlDown() ) {
-					newState = Maze.HOLE;
-				} else {
-					newState = Maze.DEFAULT;
+				if( e.isPrimaryButtonDown() ) {
+					int newState;
+					if( e.isShiftDown() ) {
+						newState = getState() == Maze.MONSTER ? Maze.DEFAULT : Maze.MONSTER;
+					} else if( e.isControlDown() ) {
+						newState = Maze.DEFAULT;
+					} else {
+						newState = Maze.HOLE;
+					}
+					maze.setCellState( x, y, newState );
+				}
+				if( e.isSecondaryButtonDown() ) {
+					maze.setCookie( x, y );
 				}
 
-				maze.setCellState( x, y, newState );
 			} );
 		}
 

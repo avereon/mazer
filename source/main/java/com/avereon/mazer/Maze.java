@@ -3,6 +3,8 @@ package com.avereon.mazer;
 import com.avereon.util.LogUtil;
 import com.avereon.xenon.node.Node;
 import com.avereon.xenon.transaction.Txn;
+import com.avereon.xenon.transaction.TxnEvent;
+import com.avereon.xenon.transaction.TxnException;
 import org.slf4j.Logger;
 
 import java.lang.invoke.MethodHandles;
@@ -15,11 +17,17 @@ public class Maze extends Node {
 
 	public static final int MONSTER = -1;
 
+	public static final int COOKIE = -2;
+
 	public static final int HOLE = Integer.MIN_VALUE;
 
 	private static final String WIDTH = "width";
 
 	private static final String HEIGHT = "height";
+
+	private static final String COOKIE_X = "cookie-x";
+
+	private static final String COOKIE_Y = "cookie-y";
 
 	private static final int MIN_WIDTH = 1;
 
@@ -28,10 +36,6 @@ public class Maze extends Node {
 	private static final int DEFAULT_WIDTH = 10;
 
 	private static final int DEFAULT_HEIGHT = 10;
-
-	private int x;
-
-	private int y;
 
 	private Direction direction;
 
@@ -47,18 +51,8 @@ public class Maze extends Node {
 		return getValue( WIDTH );
 	}
 
-	public Maze setWidth( int width ) {
-		setSize( width, getHeight() );
-		return this;
-	}
-
 	public int getHeight() {
 		return getValue( HEIGHT );
-	}
-
-	public Maze setHeight( int height ) {
-		setSize( getWidth(), height );
-		return this;
 	}
 
 	public void setSize( int width, int height ) {
@@ -69,6 +63,11 @@ public class Maze extends Node {
 			clear();
 			setValue( WIDTH, width );
 			setValue( HEIGHT, height );
+			for( int x = 0; x < width; x++ ) {
+				for( int y = 0; y < height; y++ ) {
+					setCellState( x, y, DEFAULT );
+				}
+			}
 			Txn.commit();
 		} catch( Exception exception ) {
 			log.warn( "Error changing maze size", exception );
@@ -76,16 +75,23 @@ public class Maze extends Node {
 	}
 
 	public int getX() {
-		return x;
+		return getResource( COOKIE_X );
 	}
 
 	public int getY() {
-		return y;
+		return getResource( COOKIE_Y );
 	}
 
 	public void setCookie( int x, int y ) {
-		this.x = x;
-		this.y = y;
+		try {
+			Txn.create();
+			setCellState( x, y, Maze.DEFAULT );
+			putResource( COOKIE_X, x );
+			putResource( COOKIE_Y, y );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.error( "Error setting cookie location", exception );
+		}
 	}
 
 	public Direction getDirection() {
@@ -108,14 +114,14 @@ public class Maze extends Node {
 		return steps;
 	}
 
-	public void incrementSteps() {
+	public void incrementStepCount() {
 		steps++;
 	}
 
-	//	@Override
-	//	public void dispatchEvent( NodeEvent event ) {
-	//		super.dispatchEvent( event );
-	//		log.warn( "Maze " + event.getType() + ": " + event.getNode() );
-	//	}
+		@Override
+		public void dispatch( TxnEvent event ) {
+			super.dispatch( event );
+			log.warn( "Maze " + event.getEventType() + ": " + event );
+		}
 
 }
