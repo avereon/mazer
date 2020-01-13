@@ -33,8 +33,9 @@ public class MazeCodecTest extends BaseMazerTest {
 	@Test
 	void testSave() throws Exception {
 		maze.setSize( 3, 3 );
-		maze.setCellState( 1, 1, Maze.HOLE );
-		maze.setCookie( 0, 2 );
+		maze.setCellConfig( 0, 2, MazeConfig.COOKIE );
+		maze.setCellConfig( 1, 1, MazeConfig.HOLE );
+		maze.setCellConfig( 2, 1, MazeConfig.MONSTER );
 		maze.setDirection( Direction.NORTH );
 		asset.setModel( maze );
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -44,8 +45,9 @@ public class MazeCodecTest extends BaseMazerTest {
 
 		BufferedReader reader = new BufferedReader( new StringReader( content ) );
 		assertThat( reader.readLine(), is( "S 3,3" ) );
-		assertThat( reader.readLine(), is( "H 1,1" ) );
 		assertThat( reader.readLine(), is( "C 0,2" ) );
+		assertThat( reader.readLine(), is( "H 1,1" ) );
+		assertThat( reader.readLine(), is( "M 2,1" ) );
 		assertThat( reader.readLine(), is( "D NORTH" ) );
 		assertThat( reader.readLine(), is( nullValue() ) );
 	}
@@ -65,19 +67,24 @@ public class MazeCodecTest extends BaseMazerTest {
 		assetType.getDefaultCodec().load( asset, input );
 		maze = asset.getModel();
 
+		// Check the maze configuration
 		assertThat( maze.getWidth(), is( 3 ) );
 		assertThat( maze.getHeight(), is( 3 ) );
-		assertThat( maze.getCellState( 0, 0 ), is( Maze.DEFAULT ) );
-		assertThat( maze.getCellState( 0, 1 ), is( Maze.DEFAULT ) );
-		assertThat( maze.getCellState( 0, 2 ), is( Maze.DEFAULT ) );
-		assertThat( maze.getCellState( 1, 0 ), is( Maze.DEFAULT ) );
-		assertThat( maze.getCellState( 1, 1 ), is( Maze.HOLE ) );
-		assertThat( maze.getCellState( 1, 2 ), is( Maze.DEFAULT ) );
-		assertThat( maze.getCellState( 2, 0 ), is( Maze.DEFAULT ) );
-		assertThat( maze.getCellState( 2, 1 ), is( Maze.DEFAULT ) );
-		assertThat( maze.getCellState( 2, 2 ), is( Maze.DEFAULT ) );
+		assertThat( maze.getCellConfig( 0, 0 ), is( MazeConfig.STEP ) );
+		assertThat( maze.getCellConfig( 0, 1 ), is( MazeConfig.STEP ) );
+		assertThat( maze.getCellConfig( 0, 2 ), is( MazeConfig.STEP ) );
+		assertThat( maze.getCellConfig( 1, 0 ), is( MazeConfig.STEP ) );
+		assertThat( maze.getCellConfig( 1, 1 ), is( MazeConfig.HOLE ) );
+		assertThat( maze.getCellConfig( 1, 2 ), is( MazeConfig.STEP ) );
+		assertThat( maze.getCellConfig( 2, 0 ), is( MazeConfig.STEP ) );
+		assertThat( maze.getCellConfig( 2, 1 ), is( MazeConfig.STEP ) );
+		assertThat( maze.getCellConfig( 2, 2 ), is( MazeConfig.COOKIE ) );
+
+		// Check the initial runtime information
 		assertThat( maze.getX(), is( 2 ) );
 		assertThat( maze.getY(), is( 2 ) );
+		assertThat( maze.get( 1, 1 ), is( MazeConfig.HOLE ) );
+		assertThat( maze.get( 2, 2 ), is( MazeConfig.STEP ) );
 		assertThat( maze.getDirection(), is( Direction.SOUTH ) );
 	}
 

@@ -7,6 +7,7 @@ import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.notice.Notice;
+import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.event.ActionEvent;
@@ -30,24 +31,29 @@ public class MazeTool extends ProgramTool {
 
 	private MazePropertiesAction mazePropertiesAction;
 
+	private RunToggleAction runAction;
+
 	private GridPane grid;
 
 	private Cell[][] cells;
 
 	private int zoom = DEFAULT_ZOOM;
 
+	private MazeSolver solver;
+
 	static {
 		backgrounds = new HashMap<>();
-		backgrounds.put( Maze.COOKIE, createBackground( "#80600080" ) );
-		backgrounds.put( Maze.DEFAULT, createBackground( "#80808080" ) );
-		backgrounds.put( Maze.MONSTER, createBackground( "#800000C0" ) );
-		backgrounds.put( Maze.HOLE, createBackground( "#00000000" ) );
+		backgrounds.put( MazeConfig.STEP, createBackground( "#80808080" ) );
+		backgrounds.put( MazeConfig.HOLE, createBackground( "#00000000" ) );
+		backgrounds.put( MazeConfig.COOKIE, createBackground( "#806000C0" ) );
+		backgrounds.put( MazeConfig.MONSTER, createBackground( "#00800080" ) );
 	}
 
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
+		runAction = new RunToggleAction( product.getProgram() );
 
 		grid = new GridPane();
 		grid.setAlignment( Pos.CENTER );
@@ -69,11 +75,15 @@ public class MazeTool extends ProgramTool {
 
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				cells[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( zoom );
+				Cell cell = cells[ x ][ y ];
+				cell.setSize( zoom );
+				int config = maze.getCellConfig( x, y );
+				cell.setConfig( config == MazeConfig.COOKIE ? MazeConfig.STEP : config );
+				cell.setVisits( maze.get(x,y) );
 			}
 		}
 
-		cells[ maze.getX() ][ maze.getY() ].setState( Maze.COOKIE );
+		cells[ maze.getX() ][ maze.getY() ].setConfig( MazeConfig.COOKIE );
 	}
 
 	private void rebuildGrid() {
@@ -93,15 +103,25 @@ public class MazeTool extends ProgramTool {
 	@Override
 	protected void activate() throws ToolException {
 		pushAction( "properties", mazePropertiesAction );
+		pushAction( "redo", runAction );
 	}
 
 	@Override
 	protected void conceal() throws ToolException {
 		pullAction( "properties", mazePropertiesAction );
+		pullAction( "redo", runAction );
 	}
 
 	private Maze getMaze() {
 		return (Maze)getAsset().getModel();
+	}
+
+	public MazeSolver getSolver() {
+		return solver;
+	}
+
+	public void setSolver( MazeSolver solver ) {
+		this.solver = solver;
 	}
 
 	// TODO Since this is more of an asset action and not a tool action it may
@@ -125,6 +145,31 @@ public class MazeTool extends ProgramTool {
 
 	}
 
+	private class RunToggleAction extends Action {
+
+		protected RunToggleAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			MazeSolver solver = getSolver();
+			if( solver == null ) setSolver( solver = new RandomSolver( getProgram(), getProduct(), MazeTool.this, getMaze() ));
+
+			if( solver.isRunning() ) {
+				solver.stop();
+			} else {
+				getProgram().getTaskManager().submit( Task.of( String.valueOf( solver ), solver ) );
+			}
+		}
+
+	}
+
 	private static Background createBackground( String color ) {
 		return new Background( new BackgroundFill( Color.web( color ), CornerRadii.EMPTY, Insets.EMPTY ) );
 	}
@@ -139,29 +184,32 @@ public class MazeTool extends ProgramTool {
 
 		private int size;
 
-		private int state;
+		private int visits;
+
+		private int config;
+
+		private Background visited = createBackground( "#80000040" );
 
 		public Cell( Maze maze, int x, int y ) {
 			this.maze = maze;
 			this.x = x;
 			this.y = y;
-			setBackground( backgrounds.get( Maze.DEFAULT ) );
+			setBackground( backgrounds.get( MazeConfig.STEP ) );
 
 			setOnMousePressed( e -> {
-
 				if( e.isPrimaryButtonDown() ) {
 					int newState;
 					if( e.isShiftDown() ) {
-						newState = getState() == Maze.MONSTER ? Maze.DEFAULT : Maze.MONSTER;
+						newState = getVisits() == MazeConfig.MONSTER ? MazeConfig.STEP : MazeConfig.MONSTER;
 					} else if( e.isControlDown() ) {
-						newState = Maze.DEFAULT;
+						newState = MazeConfig.STEP;
 					} else {
-						newState = Maze.HOLE;
+						newState = MazeConfig.HOLE;
 					}
-					maze.setCellState( x, y, newState );
+					maze.setCellConfig( x, y, newState );
 				}
 				if( e.isSecondaryButtonDown() ) {
-					maze.setCookie( x, y );
+					maze.setCellConfig( x, y, MazeConfig.COOKIE );
 				}
 
 			} );
@@ -177,14 +225,21 @@ public class MazeTool extends ProgramTool {
 			return this;
 		}
 
-		public int getState() {
-			return this.state;
+		public void setConfig( int config ) {
+			this.config = config;
+			setBackground( backgrounds.get( config ) );
+
+			if( config == MazeConfig.STEP || config == MazeConfig.MONSTER ) {
+				if( visits > 0 ) setBackground( visited );
+			}
 		}
 
-		public Cell setState( int state ) {
-			this.state = state;
-			if( state > Maze.DEFAULT ) state = Maze.DEFAULT;
-			setBackground( backgrounds.get( state ) );
+		public int getVisits() {
+			return this.visits;
+		}
+
+		public Cell setVisits( int visits ) {
+			this.visits = visits;
 			return this;
 		}
 

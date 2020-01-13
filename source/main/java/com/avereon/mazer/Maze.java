@@ -13,13 +13,7 @@ public class Maze extends Node {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
-	public static final int DEFAULT = 0;
-
-	public static final int MONSTER = -1;
-
-	public static final int COOKIE = -2;
-
-	public static final int HOLE = Integer.MIN_VALUE;
+	private static final int UNVISITED = 0;
 
 	private static final String WIDTH = "width";
 
@@ -29,6 +23,10 @@ public class Maze extends Node {
 
 	private static final String COOKIE_Y = "cookie-y";
 
+	private static final String DIRECTION = "direction";
+
+	private static final String COLOR_SCALE = "color-scale";
+
 	private static final int MIN_WIDTH = 1;
 
 	private static final int MIN_HEIGHT = 1;
@@ -37,14 +35,12 @@ public class Maze extends Node {
 
 	private static final int DEFAULT_HEIGHT = 10;
 
-	private Direction direction;
-
 	private int steps;
 
 	public Maze() {
 		setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );
 		setDirection( Direction.EAST );
-		setCookie( 1, 1 );
+		setCookie( 0, 0 );
 	}
 
 	public int getWidth() {
@@ -65,7 +61,7 @@ public class Maze extends Node {
 			setValue( HEIGHT, height );
 			for( int x = 0; x < width; x++ ) {
 				for( int y = 0; y < height; y++ ) {
-					setCellState( x, y, DEFAULT );
+					setCellConfig( x, y, MazeConfig.STEP );
 				}
 			}
 			Txn.commit();
@@ -82,10 +78,15 @@ public class Maze extends Node {
 		return getResource( COOKIE_Y );
 	}
 
+	public boolean isCookie( int x, int y ) {
+		return getX() == x && getY() == y;
+	}
+
 	public void setCookie( int x, int y ) {
+		log.warn( "Setting cookie location: " + x + "," + y );
 		try {
+			set( x, y, get( x, y ) + 1 );
 			Txn.create();
-			setCellState( x, y, Maze.DEFAULT );
 			putResource( COOKIE_X, x );
 			putResource( COOKIE_Y, y );
 			Txn.commit();
@@ -94,20 +95,30 @@ public class Maze extends Node {
 		}
 	}
 
+	public int getCellConfig( int x, int y ) {
+		return getValue( "cell-" + x + "-" + y, MazeConfig.STEP );
+	}
+
+	void setCellConfig( int x, int y, int state ) {
+		setValue( "cell-" + x + "-" + y, state );
+		if( state == MazeConfig.COOKIE ) setCookie( x, y );
+		if( state == MazeConfig.HOLE ) set( x, y, MazeConfig.HOLE );
+	}
+
 	public Direction getDirection() {
-		return direction;
+		return getResource( DIRECTION );
 	}
 
 	public void setDirection( Direction direction ) {
-		this.direction = direction;
+		putResource( DIRECTION, direction );
 	}
 
-	public int getCellState( int x, int y ) {
-		return getValue( "cell-" + x + "-" + y, Maze.DEFAULT );
+	public double getColorScale() {
+		return getResource( COLOR_SCALE );
 	}
 
-	void setCellState( int x, int y, int state ) {
-		setValue( "cell-" + x + "-" + y, state );
+	public void setColorScale( double scale ) {
+		putResource( COLOR_SCALE, scale );
 	}
 
 	public int getStepCount() {
@@ -118,10 +129,70 @@ public class Maze extends Node {
 		steps++;
 	}
 
-		@Override
-		public void dispatch( TxnEvent event ) {
-			super.dispatch( event );
-			//log.warn( "Maze " + event.getEventType() + ": " + event );
+	public int get( int x, int y ) {
+		return getResource( "work-" + x + "-" + y, UNVISITED );
+	}
+
+	public void set( int x, int y, int value ) {
+		putResource( "work-" + x + "-" + y, value );
+	}
+
+	public void resetVisits() {
+		int width = getWidth();
+		int height = getHeight();
+		for( int x = 0; x < width; x++ ) {
+			for( int y = 0; y < height; y++ ) {
+				set( x, y, UNVISITED );
+			}
 		}
+	}
+
+	public boolean isGridClear() {
+		int width = getWidth();
+		int height = getHeight();
+		for( int x = 0; x < width; x++ ) {
+			for( int y = 0; y < height; y++ ) {
+				if( get( x, y ) == UNVISITED ) return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean isLeftClear() {
+		return getDirection().isLeftClear( this );
+	}
+
+	public boolean isFrontClear() {
+		return getDirection().isFrontClear( this );
+	}
+
+	public boolean isRightClear() {
+		return getDirection().isRightClear( this );
+	}
+
+	public void turnLeft() {
+		log.info( "Turn left..." );
+		getDirection().turnLeft( this );
+	}
+
+	public void turnRight() {
+		log.info( "Turn right..." );
+		getDirection().turnRight( this );
+	}
+
+	public void move() throws MoveException {
+		log.info( "Move forward..." );
+		move( 1 );
+	}
+
+	public void move( int steps ) throws MoveException {
+		getDirection().move( this, steps );
+	}
+
+	@Override
+	public void dispatch( TxnEvent event ) {
+		super.dispatch( event );
+		//log.warn( "Maze " + event.getEventType() + ": " + event );
+	}
 
 }

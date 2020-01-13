@@ -63,15 +63,15 @@ public class MazeCodec extends Codec {
 						break;
 					}
 					case 'H': {
-						maze.setCellState( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), Maze.HOLE );
-						break;
-					}
-					case 'M': {
-						maze.setCellState( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), Maze.MONSTER );
+						maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.HOLE );
 						break;
 					}
 					case 'C': {
-						maze.setCookie( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ) );
+						maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.COOKIE );
+						break;
+					}
+					case 'M': {
+						maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.MONSTER );
 						break;
 					}
 					case 'D': {
@@ -81,6 +81,7 @@ public class MazeCodec extends Codec {
 				}
 			}
 
+			maze.resetVisits();
 			asset.setModel( maze );
 		} catch( Exception exception ) {
 			throw new IOException( exception );
@@ -100,11 +101,25 @@ public class MazeCodec extends Codec {
 			printer.println( "S" + " " + width + "," + height );
 			for( int x = 0; x < width; x++ ) {
 				for( int y = 0; y < height; y++ ) {
-					int state = maze.getCellState( x, y );
-					if( state < Maze.DEFAULT ) printer.println( (state == Maze.MONSTER ? "M" : "H") + " " + x + "," + y );
+					int state = maze.getCellConfig( x, y );
+					if( state != MazeConfig.STEP ) {
+						switch( state ) {
+							case MazeConfig.HOLE : {
+								printer.println( "H " + x + "," + y );
+								break;
+							}
+							case MazeConfig.COOKIE : {
+								printer.println( "C " + x + "," + y );
+								break;
+							}
+							case MazeConfig.MONSTER : {
+								printer.println( "M " + x + "," + y );
+								break;
+							}
+						}
+					}
 				}
 			}
-			printer.println( "C" + " " + maze.getX() + "," + maze.getY() );
 			printer.println( "D" + " " + maze.getDirection().name() );
 
 			printer.close();
