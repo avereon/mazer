@@ -48,22 +48,37 @@ public class MazeCodec extends Codec {
 		BufferedReader reader = new BufferedReader( new InputStreamReader( input, StandardCharsets.UTF_8 ) );
 
 		try {
-			Maze maze = new Maze();
+			Maze maze = asset.getModel();
 
-			// First line is the maze size
-			String[] size = reader.readLine().split( " " );
-			int width = Integer.parseInt( size[ 0 ] );
-			int height = Integer.parseInt( size[ 1 ] );
-			maze.setSize( width, height );
-
-			// Load the maze state
-			int cellCount = width * height;
-			for( int index = 0; index < cellCount; index++ ) {
-				String[] cellData = reader.readLine().split( " " );
-				int x = Integer.parseInt( cellData[0]);
-				int y = Integer.parseInt( cellData[1]);
-				int s = Integer.parseInt( cellData[2]);
-				maze.setCellState( x,y,s );
+			String line;
+			while( (line = reader.readLine()) != null ) {
+				char type = line.charAt( 0 );
+				String[] data = line.substring( 2 ).split( "," );
+				for( int index = 0; index < data.length; index++ ) {
+					data[ index ] = data[ index ].trim();
+				}
+				switch( type ) {
+					case 'S': {
+						maze.setSize( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ) );
+						break;
+					}
+					case 'H': {
+						maze.setCellState( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), Maze.HOLE );
+						break;
+					}
+					case 'M': {
+						maze.setCellState( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), Maze.MONSTER );
+						break;
+					}
+					case 'C': {
+						maze.setCookie( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ) );
+						break;
+					}
+					case 'D': {
+						maze.setDirection( Direction.valueOf( data[ 0 ] ) );
+						break;
+					}
+				}
 			}
 
 			asset.setModel( maze );
@@ -74,19 +89,23 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void save( Asset asset, OutputStream output ) throws IOException {
-		log.warn( "Saving asset: " + asset  );
+		log.warn( "Saving asset: " + asset );
 		try {
 			Maze maze = asset.getModel();
 			int width = maze.getWidth();
 			int height = maze.getHeight();
 
 			PrintStream printer = new PrintStream( output, true, StandardCharsets.UTF_8 );
-			printer.println( width + " " + height );
+
+			printer.println( "S" + " " + width + "," + height );
 			for( int x = 0; x < width; x++ ) {
 				for( int y = 0; y < height; y++ ) {
-					printer.println( x + " " + y + " " + maze.getCellState( x, y ) );
+					int state = maze.getCellState( x, y );
+					if( state < Maze.DEFAULT ) printer.println( (state == Maze.MONSTER ? "M" : "H") + " " + x + "," + y );
 				}
 			}
+			printer.println( "C" + " " + maze.getX() + "," + maze.getY() );
+			printer.println( "D" + " " + maze.getDirection().name() );
 
 			printer.close();
 		} catch( Exception exception ) {

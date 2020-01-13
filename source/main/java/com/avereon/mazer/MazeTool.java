@@ -17,6 +17,8 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MazeTool extends ProgramTool {
 
@@ -24,13 +26,23 @@ public class MazeTool extends ProgramTool {
 
 	private static final int DEFAULT_ZOOM = 20;
 
+	private static Map<Integer, Background> backgrounds;
+
 	private MazePropertiesAction mazePropertiesAction;
 
 	private GridPane grid;
 
-	private Space[][] state;
+	private Cell[][] cells;
 
 	private int zoom = DEFAULT_ZOOM;
+
+	static {
+		backgrounds = new HashMap<>();
+		backgrounds.put( Maze.COOKIE, createBackground( "#80600080" ) );
+		backgrounds.put( Maze.DEFAULT, createBackground( "#80808080" ) );
+		backgrounds.put( Maze.MONSTER, createBackground( "#800000C0" ) );
+		backgrounds.put( Maze.HOLE, createBackground( "#00000000" ) );
+	}
 
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -53,13 +65,15 @@ public class MazeTool extends ProgramTool {
 		int width = maze.getWidth();
 		int height = maze.getHeight();
 
-		if( state == null || state.length != width || state[ 0 ].length != height ) rebuildGrid();
+		if( cells == null || cells.length != width || cells[ 0 ].length != height ) rebuildGrid();
 
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				state[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( zoom );
+				cells[ x ][ y ].setState( maze.getCellState( x, y ) ).setSize( zoom );
 			}
 		}
+
+		cells[ maze.getX() ][ maze.getY() ].setState( Maze.COOKIE );
 	}
 
 	private void rebuildGrid() {
@@ -68,10 +82,10 @@ public class MazeTool extends ProgramTool {
 		Maze maze = getMaze();
 		int width = maze.getWidth();
 		int height = maze.getHeight();
-		state = new Space[ width ][ height ];
+		cells = new Cell[ width ][ height ];
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				grid.add( state[ x ][ y ] = new Space( maze, x, y ), x, y );
+				grid.add( cells[ x ][ y ] = new Cell( maze, x, y ), x, y );
 			}
 		}
 	}
@@ -111,11 +125,11 @@ public class MazeTool extends ProgramTool {
 
 	}
 
-	private static class Space extends Region {
+	private static Background createBackground( String color ) {
+		return new Background( new BackgroundFill( Color.web( color ), CornerRadii.EMPTY, Insets.EMPTY ) );
+	}
 
-		private static final Background DEFAULT = new Background( new BackgroundFill( Color.web( "#80808060" ), CornerRadii.EMPTY, Insets.EMPTY ) );
-
-		private static final Background HOLE = new Background( new BackgroundFill( Color.web( "#00000000" ), CornerRadii.EMPTY, Insets.EMPTY ) );
+	private static class Cell extends Region {
 
 		private Maze maze;
 
@@ -127,25 +141,29 @@ public class MazeTool extends ProgramTool {
 
 		private int state;
 
-		public Space( Maze maze, int x, int y ) {
+		public Cell( Maze maze, int x, int y ) {
 			this.maze = maze;
 			this.x = x;
 			this.y = y;
-			setBackground( HOLE );
+			setBackground( backgrounds.get( Maze.DEFAULT ) );
 
 			setOnMousePressed( e -> {
-				int newState = state;
-				switch( state ) {
-					case -1: {
-						newState = 0;
-						break;
+
+				if( e.isPrimaryButtonDown() ) {
+					int newState;
+					if( e.isShiftDown() ) {
+						newState = getState() == Maze.MONSTER ? Maze.DEFAULT : Maze.MONSTER;
+					} else if( e.isControlDown() ) {
+						newState = Maze.DEFAULT;
+					} else {
+						newState = Maze.HOLE;
 					}
-					case 0: {
-						newState = -1;
-						break;
-					}
+					maze.setCellState( x, y, newState );
 				}
-				maze.setCellState( x, y, newState );
+				if( e.isSecondaryButtonDown() ) {
+					maze.setCookie( x, y );
+				}
+
 			} );
 		}
 
@@ -153,7 +171,7 @@ public class MazeTool extends ProgramTool {
 			return size;
 		}
 
-		public Space setSize( int size ) {
+		public Cell setSize( int size ) {
 			setPrefSize( size, size );
 			this.size = size;
 			return this;
@@ -163,19 +181,10 @@ public class MazeTool extends ProgramTool {
 			return this.state;
 		}
 
-		public Space setState( int state ) {
+		public Cell setState( int state ) {
 			this.state = state;
-
-			switch( state ) {
-				case 0: {
-					setBackground( DEFAULT );
-					break;
-				}
-				case -1: {
-					setBackground( HOLE );
-					break;
-				}
-			}
+			if( state > Maze.DEFAULT ) state = Maze.DEFAULT;
+			setBackground( backgrounds.get( state ) );
 			return this;
 		}
 
