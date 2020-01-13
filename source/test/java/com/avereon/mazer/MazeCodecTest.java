@@ -34,6 +34,8 @@ public class MazeCodecTest extends BaseMazerTest {
 	void testSave() throws Exception {
 		maze.setSize( 3, 3 );
 		maze.setCellState( 1, 1, Maze.HOLE );
+		maze.setCookie( 0, 2 );
+		maze.setDirection( Direction.NORTH );
 		asset.setModel( maze );
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		assetType.getDefaultCodec().save( asset, output );
@@ -43,11 +45,9 @@ public class MazeCodecTest extends BaseMazerTest {
 		BufferedReader reader = new BufferedReader( new StringReader( content ) );
 		assertThat( reader.readLine(), is( "S 3,3" ) );
 		assertThat( reader.readLine(), is( "H 1,1" ) );
-		assertThat( reader.readLine(), is( "C 1,1" ) );
-		assertThat( reader.readLine(), is( "D EAST" ) );
+		assertThat( reader.readLine(), is( "C 0,2" ) );
+		assertThat( reader.readLine(), is( "D NORTH" ) );
 		assertThat( reader.readLine(), is( nullValue() ) );
-
-		assertThat( output.toByteArray().length, is( 25 ) );
 	}
 
 	@Test
