@@ -55,8 +55,8 @@ public class MazeCodecTest extends BaseMazerTest {
 		asset.setModel( maze );
 
 		StringBuilder builder = new StringBuilder( "S 3,3\n" );
-		builder.append( "H 2,2\n" );
-		builder.append( "C 0,0\n" );
+		builder.append( "H 1,1\n" );
+		builder.append( "C 2,2\n" );
 		builder.append( "D SOUTH\n" );
 
 		String content = builder.toString();
@@ -78,6 +78,7 @@ public class MazeCodecTest extends BaseMazerTest {
 		assertThat( maze.getCellState( 2, 2 ), is( Maze.DEFAULT ) );
 		assertThat( maze.getX(), is( 2 ) );
 		assertThat( maze.getY(), is( 2 ) );
+		assertThat( maze.getDirection(), is( Direction.SOUTH ) );
 	}
 
 	@Test
