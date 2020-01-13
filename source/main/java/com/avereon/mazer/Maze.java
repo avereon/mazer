@@ -121,7 +121,7 @@ public class Maze extends Node {
 		@Override
 		public void dispatch( TxnEvent event ) {
 			super.dispatch( event );
-			log.warn( "Maze " + event.getEventType() + ": " + event );
+			//log.warn( "Maze " + event.getEventType() + ": " + event );
 		}
 
 }
