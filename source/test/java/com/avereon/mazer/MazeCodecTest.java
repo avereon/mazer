@@ -83,8 +83,8 @@ public class MazeCodecTest extends BaseMazerTest {
 		// Check the initial runtime information
 		assertThat( maze.getX(), is( 2 ) );
 		assertThat( maze.getY(), is( 2 ) );
-		assertThat( maze.get( 1, 1 ), is( MazeConfig.HOLE ) );
-		assertThat( maze.get( 2, 2 ), is( MazeConfig.STEP ) );
+		assertThat( maze.get( 1, 1 ), is( 0 ) );
+		assertThat( maze.get( 2, 2 ), is( 0 ) );
 		assertThat( maze.getDirection(), is( Direction.SOUTH ) );
 	}
 
