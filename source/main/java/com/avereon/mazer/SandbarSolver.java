@@ -16,7 +16,7 @@ public class SandbarSolver extends MazeSolver {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
-	private byte[][] map;
+	private int[][] map;
 
 	private int width;
 
@@ -37,22 +37,22 @@ public class SandbarSolver extends MazeSolver {
 	public void execute() {
 		width = model.getWidth();
 		height = model.getHeight();
-		map = new byte[width][height];
+		map = new int[width][height];
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
 				int value = model.getCellConfig( x, y );
-				map[x][y] = value >= MazeConfig.HOLE ? Byte.MAX_VALUE : 0;
+				map[x][y] = value == MazeConfig.HOLE ? -1 : 0;
 			}
 		}
 		map[model.getX()][model.getY()]++;
 		model.setColorScale( 16 );
 
 		while( execute && !model.isGridClear() ) {
-			// Determine which way to go.
+			// Determine which way to go
 			model.setDirection( determineDirection( model.getDirection() ) );
 
 			if( model.isFrontClear() ) {
-				// Move.
+				// Move
 				try {
 					model.move();
 				} catch( MoveException exception ) {
@@ -60,7 +60,7 @@ public class SandbarSolver extends MazeSolver {
 					return;
 				}
 
-				// Update the map.
+				// Update the map
 				map[model.getX()][model.getY()]++;
 			}
 			ThreadUtil.pause( 50 );
@@ -68,36 +68,36 @@ public class SandbarSolver extends MazeSolver {
 	}
 
 	private Direction determineDirection( Direction current ) {
-		// Collect the surrounding values.
+		// Collect the surrounding values
 		int x = model.getX();
 		int y = model.getY();
-		byte n = getValue( x, y - 1 );
-		byte e = getValue( x + 1, y );
-		byte s = getValue( x, y + 1 );
-		byte w = getValue( x - 1, y );
+		int n = getValue( x, y - 1 );
+		int e = getValue( x + 1, y );
+		int s = getValue( x, y + 1 );
+		int w = getValue( x - 1, y );
 
-		// Find lowest value.
+		// Find lowest value that is not -1
 		int v = Byte.MAX_VALUE;
-		if( n < v ) v = n;
-		if( e < v ) v = e;
-		if( s < v ) v = s;
-		if( w < v ) v = w;
+		if( n >= 0 && n < v ) v = n;
+		if( e >= 0 && e < v ) v = e;
+		if( s >= 0 && s < v ) v = s;
+		if( w >= 0 && w < v ) v = w;
 
-		List<Direction> options = new ArrayList<Direction>( 4 );
-		if( n == v ) options.add( Direction.NORTH );
-		if( e == v ) options.add( Direction.EAST );
-		if( s == v ) options.add( Direction.SOUTH );
-		if( w == v ) options.add( Direction.WEST );
+		List<Direction> options = new ArrayList<>( 4 );
+		if( n >= 0 && n == v ) options.add( Direction.NORTH );
+		if( e >= 0 && e == v ) options.add( Direction.EAST );
+		if( s >= 0 && s == v ) options.add( Direction.SOUTH );
+		if( w >= 0 && w == v ) options.add( Direction.WEST );
 
-		// Prefer the current direction.
+		// Prefer the current direction
 		if( options.contains( current ) ) return current;
 
 		return options.get( random.nextInt( options.size() ) );
 	}
 
-	private byte getValue( int x, int y ) {
-		if( x < 0 || x >= width ) return Byte.MAX_VALUE;
-		if( y < 0 || y >= height ) return Byte.MAX_VALUE;
+	private int getValue( int x, int y ) {
+		if( x < 0 || x >= width ) return -1;
+		if( y < 0 || y >= height ) return -1;
 		return map[x][y];
 	}
 }

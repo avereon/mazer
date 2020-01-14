@@ -35,16 +35,14 @@ public class StackSolver extends MazeSolver {
 		}
 	}
 
-	private void turnLeft( Direction direction ) {
+	private void turnLeft() {
 		stack.push( new State( model ) );
 		model.turnLeft();
-		//direction.turnLeft( model );
 	}
 
-	private void turnRight( Direction direction ) {
+	private void turnRight() {
 		stack.push( new State( model ) );
 		model.turnRight();
-		//direction.turnRight( model );
 	}
 
 	private void move() {
@@ -81,10 +79,10 @@ public class StackSolver extends MazeSolver {
 			return;
 		} else {
 			if( canRight && (!canLeft || right <= left) ) {
-				turnRight( direction );
+				turnRight();
 				return;
 			} else if( canLeft ) {
-				turnLeft( direction );
+				turnLeft();
 				return;
 			}
 		}

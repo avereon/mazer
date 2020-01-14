@@ -184,7 +184,7 @@ public class MazeTool extends ProgramTool {
 		@Override
 		public void handle( ActionEvent event ) {
 			MazeSolver solver = getSolver();
-			if( solver == null ) setSolver( solver = new StackSolver( getProgram(), getProduct(), MazeTool.this, getMaze() ) );
+			if( solver == null ) setSolver( solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this, getMaze() ) );
 
 			if( solver.isRunning() ) {
 				solver.stop();
