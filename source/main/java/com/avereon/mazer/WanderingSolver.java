@@ -10,14 +10,14 @@ import org.slf4j.Logger;
 import java.lang.invoke.MethodHandles;
 import java.util.Random;
 
-public class RandomSolver extends MazeSolver {
+public class WanderingSolver extends MazeSolver {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
 
 	private Random random = new Random();
 
-	public RandomSolver( Program program, Product product, MazeTool editor, Maze model ) {
-		super( program, product, editor, model );
+	public WanderingSolver( Program program, Product product, MazeTool editor ) {
+		super( program, product, editor );
 	}
 
 	@Override
@@ -27,30 +27,30 @@ public class RandomSolver extends MazeSolver {
 
 	@Override
 	protected void execute() {
-		model.setColorScale( 2 );
-		while( execute && !model.isGridClear() ) {
+		getMaze().setColorScale( 2 );
+		while( execute && !getMaze().isGridClear() ) {
 			//log.info( "Random solver step..." );
 			switch( random.nextInt( 4 ) ) {
 				case 0: {
-					model.turnLeft();
+					getMaze().turnLeft();
 					break;
 				}
 				case 1: {
-					model.turnRight();
+					getMaze().turnRight();
 					break;
 				}
 				case 2: {
 					break;
 				}
 				case 3: {
-					model.turnRight();
-					model.turnRight();
+					getMaze().turnRight();
+					getMaze().turnRight();
 					break;
 				}
 			}
-			if( model.isFrontClear() ) {
+			if( getMaze().isFrontClear() ) {
 				try {
-					model.move();
+					getMaze().move();
 				} catch( MoveException exception ) {
 					program.getNoticeManager().error( exception );
 					return;

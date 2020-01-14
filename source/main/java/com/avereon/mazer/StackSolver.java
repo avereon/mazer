@@ -17,8 +17,8 @@ public class StackSolver extends MazeSolver {
 
 	private Deque<State> stack = new LinkedBlockingDeque<>();
 
-	public StackSolver( Program program, Product product, MazeTool tool, Maze model ) {
-		super( program, product, tool, model );
+	public StackSolver( Program program, Product product, MazeTool tool ) {
+		super( program, product, tool );
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class StackSolver extends MazeSolver {
 
 	@Override
 	protected void execute() {
-		while( execute && !model.isGridClear() ) {
+		while( execute && !getMaze().isGridClear() ) {
 			determineDirection( true );
 			move();
 			ThreadUtil.pause( 50 );
@@ -36,20 +36,20 @@ public class StackSolver extends MazeSolver {
 	}
 
 	private void turnLeft() {
-		stack.push( new State( model ) );
-		model.turnLeft();
+		stack.push( new State( getMaze() ) );
+		getMaze().turnLeft();
 	}
 
 	private void turnRight() {
-		stack.push( new State( model ) );
-		model.turnRight();
+		stack.push( new State( getMaze() ) );
+		getMaze().turnRight();
 	}
 
 	private void move() {
-		if( !model.isFrontClear() ) return;
-		stack.push( new State( model ) );
+		if( !getMaze().isFrontClear() ) return;
+		stack.push( new State( getMaze() ) );
 		try {
-			model.move();
+			getMaze().move();
 		} catch( MoveException exception ) {
 			program.getNoticeManager().error( exception );
 		}
@@ -59,17 +59,17 @@ public class StackSolver extends MazeSolver {
 		log.info( "Backup..." );
 		State state = stack.poll();
 		if( state == null ) return;
-		model.setCookie( state.getX(), state.getY() );
-		model.setDirection( state.getDirection() );
-		model.incrementStepCount();
+		getMaze().setCookie( state.getX(), state.getY() );
+		getMaze().setDirection( state.getDirection() );
+		getMaze().incrementStepCount();
 		determineDirection( false );
 	}
 
 	private void determineDirection( boolean forward ) {
-		Direction direction = model.getDirection();
-		int left = direction.getLeftValue( model );
-		int right = direction.getRightValue( model );
-		int front = direction.getFrontValue( model );
+		Direction direction = getMaze().getDirection();
+		int left = direction.getLeftValue( getMaze() );
+		int right = direction.getRightValue( getMaze() );
+		int front = direction.getFrontValue( getMaze() );
 
 		boolean canLeft = left >= 0;
 		boolean canRight = right >= 0;

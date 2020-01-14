@@ -24,8 +24,8 @@ public class SandbarSolver extends MazeSolver {
 
 	private Random random = new Random();
 
-	public SandbarSolver( Program program, Product product, MazeTool tool, Maze model ) {
-		super( program, product, tool, model );
+	public SandbarSolver( Program program, Product product, MazeTool tool ) {
+		super( program, product, tool );
 	}
 
 	@Override
@@ -35,33 +35,33 @@ public class SandbarSolver extends MazeSolver {
 
 	@Override
 	public void execute() {
-		width = model.getWidth();
-		height = model.getHeight();
+		width = getMaze().getWidth();
+		height = getMaze().getHeight();
 		map = new int[width][height];
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				int value = model.getCellConfig( x, y );
+				int value = getMaze().getCellConfig( x, y );
 				map[x][y] = value == MazeConfig.HOLE ? -1 : 0;
 			}
 		}
-		map[model.getX()][model.getY()]++;
-		model.setColorScale( 16 );
+		map[ getMaze().getX()][ getMaze().getY()]++;
+		getMaze().setColorScale( 16 );
 
-		while( execute && !model.isGridClear() ) {
+		while( execute && !getMaze().isGridClear() ) {
 			// Determine which way to go
-			model.setDirection( determineDirection( model.getDirection() ) );
+			getMaze().setDirection( determineDirection( getMaze().getDirection() ) );
 
-			if( model.isFrontClear() ) {
+			if( getMaze().isFrontClear() ) {
 				// Move
 				try {
-					model.move();
+					getMaze().move();
 				} catch( MoveException exception ) {
 					program.getNoticeManager().error( exception );
 					return;
 				}
 
 				// Update the map
-				map[model.getX()][model.getY()]++;
+				map[ getMaze().getX()][ getMaze().getY()]++;
 			}
 			ThreadUtil.pause( 50 );
 		}
@@ -69,8 +69,8 @@ public class SandbarSolver extends MazeSolver {
 
 	private Direction determineDirection( Direction current ) {
 		// Collect the surrounding values
-		int x = model.getX();
-		int y = model.getY();
+		int x = getMaze().getX();
+		int y = getMaze().getY();
 		int n = getValue( x, y - 1 );
 		int e = getValue( x + 1, y );
 		int s = getValue( x, y + 1 );
@@ -100,4 +100,5 @@ public class SandbarSolver extends MazeSolver {
 		if( y < 0 || y >= height ) return -1;
 		return map[x][y];
 	}
+
 }

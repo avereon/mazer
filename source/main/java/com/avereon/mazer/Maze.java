@@ -167,6 +167,7 @@ public class Maze extends Node {
 	public void reset() {
 		setCookie( getCookieStartX(), getCookieStartY() );
 		setDirection( getStartDirection() );
+		steps = 0;
 
 		// Clear all visit counts
 		int width = getWidth();

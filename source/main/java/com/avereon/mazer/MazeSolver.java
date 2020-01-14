@@ -11,7 +11,7 @@ public abstract class MazeSolver implements Runnable {
 
 	protected MazeTool editor;
 
-	protected Maze model;
+	private Maze maze;
 
 	protected boolean execute;
 
@@ -19,11 +19,19 @@ public abstract class MazeSolver implements Runnable {
 
 	private final Object stoplock = new Object();
 
-	public MazeSolver( Program program, Product product, MazeTool editor, Maze model ) {
+	public MazeSolver( Program program, Product product, MazeTool editor ) {
 		this.program = program;
 		this.product = product;
 		this.editor = editor;
-		this.model = model;
+	}
+
+	public final Maze getMaze() {
+		return maze;
+	}
+
+	public final MazeSolver setMaze( Maze maze ) {
+		this.maze = maze;
+		return this;
 	}
 
 	@Override

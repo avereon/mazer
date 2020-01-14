@@ -4,6 +4,7 @@ import com.avereon.util.LogUtil;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.UiFactory;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.notice.Notice;
@@ -13,6 +14,8 @@ import com.avereon.xenon.workpane.ToolException;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -34,6 +37,10 @@ public class MazeTool extends ProgramTool {
 	private ResetAction resetAction;
 
 	private RunToggleAction runAction;
+
+	private ComboBox<String> chooser;
+
+	private Label steps;
 
 	private GridPane grid;
 
@@ -60,7 +67,19 @@ public class MazeTool extends ProgramTool {
 
 		grid = new GridPane();
 		grid.setAlignment( Pos.CENTER );
-		getChildren().addAll( grid );
+
+		chooser = new ComboBox<>();
+		chooser.getItems().add( "Stack Solver" );
+		chooser.getItems().add( "Sandbar Solver" );
+		chooser.getItems().add( "Wandering Solver" );
+		chooser.getSelectionModel().select( 0 );
+
+		steps = new Label( "Steps: " + 0 );
+
+		BorderPane pane = new BorderPane( grid, chooser, null, steps, null );
+		pane.setBorder( new Border( new BorderStroke( Color.TRANSPARENT, BorderStrokeStyle.NONE, CornerRadii.EMPTY, new BorderWidths( UiFactory.PAD ) ) ) );
+
+		getChildren().addAll( pane );
 	}
 
 	@Override
@@ -87,6 +106,8 @@ public class MazeTool extends ProgramTool {
 		}
 
 		cells[ maze.getX() ][ maze.getY() ].setConfig( MazeConfig.COOKIE );
+
+		steps.setText( "Steps: " + maze.getStepCount() );
 	}
 
 	private void rebuildGrid() {
@@ -184,11 +205,26 @@ public class MazeTool extends ProgramTool {
 		@Override
 		public void handle( ActionEvent event ) {
 			MazeSolver solver = getSolver();
-			if( solver == null ) setSolver( solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this, getMaze() ) );
 
-			if( solver.isRunning() ) {
+			if( solver != null && solver.isRunning() ) {
 				solver.stop();
 			} else {
+				switch( chooser.getSelectionModel().getSelectedIndex() ) {
+					case 1: {
+						solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
+						break;
+					}
+					case 2: {
+						solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
+						break;
+					}
+					default : {
+						solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
+						break;
+					}
+				}
+				setSolver( solver.setMaze( getMaze() ) );
+
 				getMaze().reset();
 				Task<?> task = Task.of( String.valueOf( solver ), solver );
 				task.setPriority( Task.Priority.LOW );
