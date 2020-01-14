@@ -33,10 +33,10 @@ public class MazeCodecTest extends BaseMazerTest {
 	@Test
 	void testSave() throws Exception {
 		maze.setSize( 3, 3 );
-		maze.setCellConfig( 0, 2, MazeConfig.COOKIE );
 		maze.setCellConfig( 1, 1, MazeConfig.HOLE );
 		maze.setCellConfig( 2, 1, MazeConfig.MONSTER );
-		maze.setDirection( Direction.NORTH );
+		maze.setCookieStart( 0, 2 );
+		maze.setStartDirection( Direction.NORTH );
 		asset.setModel( maze );
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		assetType.getDefaultCodec().save( asset, output );
@@ -45,9 +45,9 @@ public class MazeCodecTest extends BaseMazerTest {
 
 		BufferedReader reader = new BufferedReader( new StringReader( content ) );
 		assertThat( reader.readLine(), is( "S 3,3" ) );
-		assertThat( reader.readLine(), is( "C 0,2" ) );
 		assertThat( reader.readLine(), is( "H 1,1" ) );
 		assertThat( reader.readLine(), is( "M 2,1" ) );
+		assertThat( reader.readLine(), is( "C 0,2" ) );
 		assertThat( reader.readLine(), is( "D NORTH" ) );
 		assertThat( reader.readLine(), is( nullValue() ) );
 	}
@@ -81,10 +81,12 @@ public class MazeCodecTest extends BaseMazerTest {
 		assertThat( maze.getCellConfig( 2, 2 ), is( MazeConfig.COOKIE ) );
 
 		// Check the initial runtime information
+		// There should be one visit where the cookie is
 		assertThat( maze.getX(), is( 2 ) );
 		assertThat( maze.getY(), is( 2 ) );
-		assertThat( maze.get( 1, 1 ), is( 0 ) );
-		assertThat( maze.get( 2, 2 ), is( 0 ) );
+		assertThat( maze.get( 2, 2 ), is( 1 ) );
+		// There should be no visits where there is a hole
+		assertThat( maze.get( 1, 1 ), is( -1 ) );
 		assertThat( maze.getDirection(), is( Direction.SOUTH ) );
 	}
 

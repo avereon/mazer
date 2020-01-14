@@ -56,7 +56,7 @@ public class RandomSolver extends MazeSolver {
 					return;
 				}
 			}
-			ThreadUtil.pause( 500 );
+			ThreadUtil.pause( 50 );
 		}
 
 	}

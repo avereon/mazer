@@ -39,7 +39,8 @@ public class Maze extends Node {
 
 	public Maze() {
 		setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );
-		setDirection( Direction.EAST );
+		setStartDirection( Direction.EAST );
+		setCookieStart( 0, 0 );
 		setCookie( 0, 0 );
 	}
 
@@ -83,7 +84,6 @@ public class Maze extends Node {
 	}
 
 	public void setCookie( int x, int y ) {
-		log.warn( "Setting cookie location: " + x + "," + y );
 		try {
 			set( x, y, get( x, y ) + 1 );
 			Txn.create();
@@ -101,8 +101,35 @@ public class Maze extends Node {
 
 	void setCellConfig( int x, int y, int state ) {
 		setValue( "cell-" + x + "-" + y, state );
-		if( state == MazeConfig.COOKIE ) setCookie( x, y );
+		if( state == MazeConfig.COOKIE ) setCookieStart( x, y );
 		if( state == MazeConfig.HOLE ) set( x, y, MazeConfig.HOLE );
+	}
+
+	public int getCookieStartX() {
+		return getValue( "cookie-start-x", 0 );
+	}
+
+	public int getCookieStartY() {
+		return getValue( "cookie-start-y", 0 );
+	}
+
+	public void setCookieStart( int x, int y ) {
+		try {
+			Txn.create();
+			setValue( "cookie-start-x", x );
+			setValue( "cookie-start-y", y );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			exception.printStackTrace();
+		}
+	}
+
+	public Direction getStartDirection() {
+		return getValue( "direction-start", Direction.EAST );
+	}
+
+	public void setStartDirection( Direction direction ) {
+		setValue( "direction-start", direction );
 	}
 
 	public Direction getDirection() {
@@ -137,14 +164,25 @@ public class Maze extends Node {
 		putResource( "work-" + x + "-" + y, value );
 	}
 
-	public void resetVisits() {
+	public void reset() {
+		setCookie( getCookieStartX(), getCookieStartY() );
+		setDirection( getStartDirection() );
+
+		// Clear all visit counts
 		int width = getWidth();
 		int height = getHeight();
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				set( x, y, UNVISITED );
+				if( getCellConfig( x, y ) == MazeConfig.HOLE ) {
+					set( x, y, -1 );
+				} else {
+					set( x, y, UNVISITED );
+				}
 			}
 		}
+
+		// Sets the visit count for the cookie
+		set( getX(), getY(), 1 );
 	}
 
 	public boolean isGridClear() {
@@ -152,7 +190,7 @@ public class Maze extends Node {
 		int height = getHeight();
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				if( get( x, y ) == UNVISITED ) return false;
+				if( getCellConfig( x, y ) != MazeConfig.HOLE && get( x, y ) == UNVISITED ) return false;
 			}
 		}
 		return true;
@@ -171,17 +209,17 @@ public class Maze extends Node {
 	}
 
 	public void turnLeft() {
-		log.info( "Turn left..." );
+		//log.info( "Turn left..." );
 		getDirection().turnLeft( this );
 	}
 
 	public void turnRight() {
-		log.info( "Turn right..." );
+		//log.info( "Turn right..." );
 		getDirection().turnRight( this );
 	}
 
 	public void move() throws MoveException {
-		log.info( "Move forward..." );
+		//log.info( "Move forward..." );
 		move( 1 );
 	}
 

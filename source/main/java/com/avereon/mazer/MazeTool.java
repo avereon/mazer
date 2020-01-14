@@ -31,6 +31,8 @@ public class MazeTool extends ProgramTool {
 
 	private MazePropertiesAction mazePropertiesAction;
 
+	private ResetAction resetAction;
+
 	private RunToggleAction runAction;
 
 	private GridPane grid;
@@ -53,6 +55,7 @@ public class MazeTool extends ProgramTool {
 		super( product, asset );
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
+		resetAction = new ResetAction( product.getProgram() );
 		runAction = new RunToggleAction( product.getProgram() );
 
 		grid = new GridPane();
@@ -75,11 +78,11 @@ public class MazeTool extends ProgramTool {
 
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
+				int config = maze.getCellConfig( x, y );
 				Cell cell = cells[ x ][ y ];
 				cell.setSize( zoom );
-				int config = maze.getCellConfig( x, y );
 				cell.setConfig( config == MazeConfig.COOKIE ? MazeConfig.STEP : config );
-				cell.setVisits( maze.get(x,y) );
+				cell.setVisits( maze.get( x, y ) );
 			}
 		}
 
@@ -103,12 +106,14 @@ public class MazeTool extends ProgramTool {
 	@Override
 	protected void activate() throws ToolException {
 		pushAction( "properties", mazePropertiesAction );
+		pushAction( "undo", resetAction );
 		pushAction( "redo", runAction );
 	}
 
 	@Override
 	protected void conceal() throws ToolException {
 		pullAction( "properties", mazePropertiesAction );
+		pullAction( "undo", resetAction );
 		pullAction( "redo", runAction );
 	}
 
@@ -145,6 +150,26 @@ public class MazeTool extends ProgramTool {
 
 	}
 
+	private class ResetAction extends Action {
+
+		protected ResetAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent actionEvent ) {
+			MazeSolver solver = getSolver();
+			if( solver != null ) solver.stop();
+			getMaze().reset();
+		}
+
+	}
+
 	private class RunToggleAction extends Action {
 
 		protected RunToggleAction( Program program ) {
@@ -159,12 +184,15 @@ public class MazeTool extends ProgramTool {
 		@Override
 		public void handle( ActionEvent event ) {
 			MazeSolver solver = getSolver();
-			if( solver == null ) setSolver( solver = new RandomSolver( getProgram(), getProduct(), MazeTool.this, getMaze() ));
+			if( solver == null ) setSolver( solver = new StackSolver( getProgram(), getProduct(), MazeTool.this, getMaze() ) );
 
 			if( solver.isRunning() ) {
 				solver.stop();
 			} else {
-				getProgram().getTaskManager().submit( Task.of( String.valueOf( solver ), solver ) );
+				getMaze().reset();
+				Task<?> task = Task.of( String.valueOf( solver ), solver );
+				task.setPriority( Task.Priority.LOW );
+				getProgram().getTaskManager().submit( task );
 			}
 		}
 
@@ -209,7 +237,8 @@ public class MazeTool extends ProgramTool {
 					maze.setCellConfig( x, y, newState );
 				}
 				if( e.isSecondaryButtonDown() ) {
-					maze.setCellConfig( x, y, MazeConfig.COOKIE );
+					maze.setCookieStart( x, y );
+					maze.reset();
 				}
 
 			} );

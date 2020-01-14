@@ -75,13 +75,13 @@ public class MazeCodec extends Codec {
 						break;
 					}
 					case 'D': {
-						maze.setDirection( Direction.valueOf( data[ 0 ] ) );
+						maze.setStartDirection( Direction.valueOf( data[ 0 ] ) );
 						break;
 					}
 				}
 			}
 
-			maze.resetVisits();
+			maze.reset();
 			asset.setModel( maze );
 		} catch( Exception exception ) {
 			throw new IOException( exception );
@@ -108,10 +108,6 @@ public class MazeCodec extends Codec {
 								printer.println( "H " + x + "," + y );
 								break;
 							}
-							case MazeConfig.COOKIE : {
-								printer.println( "C " + x + "," + y );
-								break;
-							}
 							case MazeConfig.MONSTER : {
 								printer.println( "M " + x + "," + y );
 								break;
@@ -120,7 +116,8 @@ public class MazeCodec extends Codec {
 					}
 				}
 			}
-			printer.println( "D" + " " + maze.getDirection().name() );
+			printer.println( "C" + " " + maze.getCookieStartX() + "," + maze.getCookieStartY() );
+			printer.println( "D" + " " + maze.getStartDirection().name() );
 
 			printer.close();
 		} catch( Exception exception ) {
