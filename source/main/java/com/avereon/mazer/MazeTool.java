@@ -1,10 +1,7 @@
 package com.avereon.mazer;
 
 import com.avereon.util.LogUtil;
-import com.avereon.xenon.Action;
-import com.avereon.xenon.Program;
-import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.UiFactory;
+import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.notice.Notice;
@@ -69,12 +66,12 @@ public class MazeTool extends ProgramTool {
 		grid.setAlignment( Pos.CENTER );
 
 		chooser = new ComboBox<>();
-		chooser.getItems().add( "Stack Solver" );
-		chooser.getItems().add( "Sandbar Solver" );
-		chooser.getItems().add( "Wandering Solver" );
+		chooser.getItems().add( getProduct().rb().text( BundleKey.LABEL, "solver.stack" ) );
+		chooser.getItems().add( getProduct().rb().text( BundleKey.LABEL, "solver.sandbar" ) );
+		chooser.getItems().add( getProduct().rb().text( BundleKey.LABEL, "solver.random" ) );
 		chooser.getSelectionModel().select( 0 );
 
-		steps = new Label( "Steps: " + 0 );
+		steps = new Label( getProduct().rb().text( BundleKey.PROMPT, "steps" ) + 0 );
 
 		BorderPane pane = new BorderPane( grid, chooser, null, steps, null );
 		pane.setBorder( new Border( new BorderStroke( Color.TRANSPARENT, BorderStrokeStyle.NONE, CornerRadii.EMPTY, new BorderWidths( UiFactory.PAD ) ) ) );
@@ -107,7 +104,7 @@ public class MazeTool extends ProgramTool {
 
 		cells[ maze.getX() ][ maze.getY() ].setConfig( MazeConfig.COOKIE );
 
-		steps.setText( "Steps: " + maze.getStepCount() );
+		steps.setText( getProduct().rb().text( BundleKey.PROMPT, "steps" ) + maze.getStepCount() );
 	}
 
 	private void rebuildGrid() {
