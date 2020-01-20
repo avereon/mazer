@@ -218,7 +218,7 @@ public class MazeTool extends ProgramTool {
 						solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
 						break;
 					}
-					default : {
+					default: {
 						solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
 						break;
 					}
