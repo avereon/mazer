@@ -124,15 +124,23 @@ public class MazeTool extends ProgramTool {
 	@Override
 	protected void activate() throws ToolException {
 		pushAction( "properties", mazePropertiesAction );
-		pushAction( "undo", resetAction );
-		pushAction( "redo", runAction );
+		//pushAction( "undo", resetAction );
+		//pushAction( "redo", runAction );
+		pushAction( "reset", resetAction );
+		pushAction( "runpause", runAction );
+
+		getProgram().getWorkspaceManager().getActiveWorkspace().pushToolbarActions( "reset", "runpause" );
 	}
 
 	@Override
 	protected void conceal() throws ToolException {
+		getProgram().getWorkspaceManager().getActiveWorkspace().pullToolbarActions();
+
 		pullAction( "properties", mazePropertiesAction );
-		pullAction( "undo", resetAction );
-		pullAction( "redo", runAction );
+		//pullAction( "undo", resetAction );
+		//pullAction( "redo", runAction );
+		pullAction( "reset", resetAction );
+		pullAction( "runpause", runAction );
 	}
 
 	private Maze getMaze() {

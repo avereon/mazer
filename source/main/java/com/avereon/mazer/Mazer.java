@@ -1,8 +1,10 @@
 package com.avereon.mazer;
 
+import com.avereon.rossa.icon.PauseIcon;
+import com.avereon.rossa.icon.PlayIcon;
 import com.avereon.util.LogUtil;
 import com.avereon.xenon.Mod;
-import com.avereon.xenon.tool.ToolMetadata;
+import com.avereon.xenon.tool.ToolRegistration;
 import org.slf4j.Logger;
 
 import java.lang.invoke.MethodHandles;
@@ -15,9 +17,15 @@ public class Mazer extends Mod {
 
 	@Override
 	public void register() {
-		getProgram().getIconLibrary().register( "mazer", MazerIcon.class );
-		getProgram().getAssetManager().addAssetType( mazeAssetType = new MazeAssetType( this ) );
-		getProgram().getToolManager().registerTool( mazeAssetType, new ToolMetadata( this, MazeTool.class ) );
+		registerIcon( "mazer", MazerIcon.class );
+		registerIcon( "play", PlayIcon.class );
+		registerIcon( "pause", PauseIcon.class );
+
+		registerAssetType( mazeAssetType = new MazeAssetType( this ) );
+		registerTool( mazeAssetType, new ToolRegistration( this, MazeTool.class ) );
+
+		registerAction( this.rb(), "reset" );
+		registerAction( this.rb(), "runpause" );
 	}
 
 	@Override
@@ -28,9 +36,15 @@ public class Mazer extends Mod {
 
 	@Override
 	public void unregister() {
-		getProgram().getToolManager().unregisterTool( mazeAssetType, MazeTool.class );
-		getProgram().getAssetManager().removeAssetType( mazeAssetType );
-		getProgram().getIconLibrary().unregister( "mazer", MazerIcon.class );
+		unregisterAction( "runpause" );
+		unregisterAction( "reset" );
+
+		unregisterTool( mazeAssetType, MazeTool.class );
+		unregisterAssetType( mazeAssetType );
+
+		unregisterIcon( "pause", PauseIcon.class );
+		unregisterIcon( "play", PlayIcon.class );
+		unregisterIcon( "mazer", MazerIcon.class );
 	}
 
 }

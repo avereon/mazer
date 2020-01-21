@@ -4,6 +4,7 @@ module com.avereon.mazer {
 	requires transitive com.avereon.zevra;
 	requires transitive javafx.controls;
 	requires transitive javafx.graphics;
+	requires com.avereon.rossa;
 
 	opens com.avereon.mazer.bundles;
 
