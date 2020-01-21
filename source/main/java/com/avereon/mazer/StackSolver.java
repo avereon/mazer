@@ -51,7 +51,7 @@ public class StackSolver extends MazeSolver {
 		try {
 			getMaze().move();
 		} catch( MoveException exception ) {
-			program.getNoticeManager().error( exception );
+			getProgram().getNoticeManager().error( exception );
 		}
 	}
 

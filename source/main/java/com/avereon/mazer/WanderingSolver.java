@@ -29,7 +29,6 @@ public class WanderingSolver extends MazeSolver {
 	protected void execute() {
 		getMaze().setColorScale( 2 );
 		while( execute && !getMaze().isGridClear() ) {
-			//log.info( "Random solver step..." );
 			switch( random.nextInt( 4 ) ) {
 				case 0: {
 					getMaze().turnLeft();
@@ -52,7 +51,7 @@ public class WanderingSolver extends MazeSolver {
 				try {
 					getMaze().move();
 				} catch( MoveException exception ) {
-					program.getNoticeManager().error( exception );
+					getProgram().getNoticeManager().error( exception );
 					return;
 				}
 			}

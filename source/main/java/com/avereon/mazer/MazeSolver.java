@@ -2,14 +2,14 @@ package com.avereon.mazer;
 
 import com.avereon.product.Product;
 import com.avereon.xenon.Program;
+import com.avereon.xenon.ProgramTask;
+import javafx.application.Platform;
 
-public abstract class MazeSolver implements Runnable {
-
-	protected Program program;
+public abstract class MazeSolver extends ProgramTask<Void> {
 
 	protected Product product;
 
-	protected MazeTool editor;
+	protected MazeTool tool;
 
 	private Maze maze;
 
@@ -19,10 +19,19 @@ public abstract class MazeSolver implements Runnable {
 
 	private final Object stoplock = new Object();
 
-	public MazeSolver( Program program, Product product, MazeTool editor ) {
-		this.program = program;
+	public MazeSolver( Program program, Product product, MazeTool tool ) {
+		super(program);
 		this.product = product;
-		this.editor = editor;
+		this.tool = tool;
+		setPriority( Priority.LOW );
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public MazeTool getTool() {
+		return tool;
 	}
 
 	public final Maze getMaze() {
@@ -35,19 +44,19 @@ public abstract class MazeSolver implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public Void call() {
 		running = true;
 		execute = true;
 		try {
-			//editor.updateActionState();
 			execute();
 		} finally {
 			running = false;
-			//editor.updateActionState();
+			Platform.runLater( () -> getProgram().getActionLibrary().getAction( "runpause" ).setState( "run" ) );
 			synchronized( stoplock ) {
 				stoplock.notifyAll();
 			}
 		}
+		return null;
 	}
 
 	public boolean isRunning() {

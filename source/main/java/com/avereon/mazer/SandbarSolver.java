@@ -37,14 +37,14 @@ public class SandbarSolver extends MazeSolver {
 	public void execute() {
 		width = getMaze().getWidth();
 		height = getMaze().getHeight();
-		map = new int[width][height];
+		map = new int[ width ][ height ];
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
 				int value = getMaze().getCellConfig( x, y );
-				map[x][y] = value == MazeConfig.HOLE ? -1 : 0;
+				map[ x ][ y ] = value == MazeConfig.HOLE ? -1 : 0;
 			}
 		}
-		map[ getMaze().getX()][ getMaze().getY()]++;
+		map[ getMaze().getX() ][ getMaze().getY() ]++;
 		getMaze().setColorScale( 16 );
 
 		while( execute && !getMaze().isGridClear() ) {
@@ -56,12 +56,12 @@ public class SandbarSolver extends MazeSolver {
 				try {
 					getMaze().move();
 				} catch( MoveException exception ) {
-					program.getNoticeManager().error( exception );
+					getProgram().getNoticeManager().error( exception );
 					return;
 				}
 
 				// Update the map
-				map[ getMaze().getX()][ getMaze().getY()]++;
+				map[ getMaze().getX() ][ getMaze().getY() ]++;
 			}
 			ThreadUtil.pause( 50 );
 		}
@@ -98,7 +98,7 @@ public class SandbarSolver extends MazeSolver {
 	private int getValue( int x, int y ) {
 		if( x < 0 || x >= width ) return -1;
 		if( y < 0 || y >= height ) return -1;
-		return map[x][y];
+		return map[ x ][ y ];
 	}
 
 }

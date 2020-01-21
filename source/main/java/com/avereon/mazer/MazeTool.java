@@ -5,7 +5,6 @@ import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.notice.Notice;
-import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.event.ActionEvent;
@@ -33,7 +32,7 @@ public class MazeTool extends ProgramTool {
 
 	private ResetAction resetAction;
 
-	private RunToggleAction runAction;
+	private RunPauseAction runAction;
 
 	private ComboBox<String> chooser;
 
@@ -60,7 +59,7 @@ public class MazeTool extends ProgramTool {
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
 		resetAction = new ResetAction( product.getProgram() );
-		runAction = new RunToggleAction( product.getProgram() );
+		runAction = new RunPauseAction( product.getProgram() );
 
 		grid = new GridPane();
 		grid.setAlignment( Pos.CENTER );
@@ -196,9 +195,9 @@ public class MazeTool extends ProgramTool {
 
 	}
 
-	private class RunToggleAction extends Action {
+	private class RunPauseAction extends Action {
 
-		protected RunToggleAction( Program program ) {
+		protected RunPauseAction( Program program ) {
 			super( program );
 		}
 
@@ -230,10 +229,9 @@ public class MazeTool extends ProgramTool {
 				}
 				setSolver( solver.setMaze( getMaze() ) );
 
-				getMaze().reset();
-				Task<?> task = Task.of( String.valueOf( solver ), solver );
-				task.setPriority( Task.Priority.LOW );
-				getProgram().getTaskManager().submit( task );
+				if( getMaze().isGridClear() ) getMaze().reset();
+
+				getProgram().getTaskManager().submit( solver );
 			}
 		}
 
