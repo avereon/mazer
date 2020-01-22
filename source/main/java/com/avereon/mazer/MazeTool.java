@@ -208,8 +208,9 @@ public class MazeTool extends ProgramTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			MazeSolver solver = getSolver();
+			if( getMaze().isGridClear() ) getMaze().reset();
 
+			MazeSolver solver = getSolver();
 			if( solver != null && solver.isRunning() ) {
 				solver.stop();
 			} else {
@@ -228,8 +229,6 @@ public class MazeTool extends ProgramTool {
 					}
 				}
 				setSolver( solver.setMaze( getMaze() ) );
-
-				if( getMaze().isGridClear() ) getMaze().reset();
 
 				getProgram().getTaskManager().submit( solver );
 			}

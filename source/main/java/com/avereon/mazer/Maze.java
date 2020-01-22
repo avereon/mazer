@@ -102,7 +102,7 @@ public class Maze extends Node {
 	void setCellConfig( int x, int y, int state ) {
 		setValue( "cell-" + x + "-" + y, state );
 		if( state == MazeConfig.COOKIE ) setCookieStart( x, y );
-		if( state == MazeConfig.HOLE ) set( x, y, MazeConfig.HOLE );
+		if( state == MazeConfig.HOLE ) set( x, y, -1 );
 	}
 
 	public int getCookieStartX() {
@@ -174,11 +174,8 @@ public class Maze extends Node {
 		int height = getHeight();
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
-				if( getCellConfig( x, y ) == MazeConfig.HOLE ) {
-					set( x, y, -1 );
-				} else {
-					set( x, y, UNVISITED );
-				}
+				boolean isHole = getCellConfig( x, y ) == MazeConfig.HOLE;
+				set( x, y, isHole ? -1 : UNVISITED );
 			}
 		}
 

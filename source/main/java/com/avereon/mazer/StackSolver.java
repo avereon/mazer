@@ -29,9 +29,8 @@ public class StackSolver extends MazeSolver {
 	@Override
 	protected void execute() {
 		while( execute && !getMaze().isGridClear() ) {
-			determineDirection( true );
+			determineMove( true );
 			move();
-			ThreadUtil.pause( 50 );
 		}
 	}
 
@@ -47,8 +46,8 @@ public class StackSolver extends MazeSolver {
 
 	private void move() {
 		if( !getMaze().isFrontClear() ) return;
-		stack.push( new State( getMaze() ) );
 		try {
+			stack.push( new State( getMaze() ) );
 			getMaze().move();
 		} catch( MoveException exception ) {
 			getProgram().getNoticeManager().error( exception );
@@ -56,26 +55,26 @@ public class StackSolver extends MazeSolver {
 	}
 
 	private void backup() {
-		log.info( "Backup..." );
 		State state = stack.poll();
 		if( state == null ) return;
 		getMaze().setCookie( state.getX(), state.getY() );
 		getMaze().setDirection( state.getDirection() );
 		getMaze().incrementStepCount();
-		determineDirection( false );
+		determineMove( false );
 	}
 
-	private void determineDirection( boolean forward ) {
+	private void determineMove( boolean forward ) {
+		ThreadUtil.pause( 50 );
 		Direction direction = getMaze().getDirection();
 		int left = direction.getLeftValue( getMaze() );
-		int right = direction.getRightValue( getMaze() );
 		int front = direction.getFrontValue( getMaze() );
+		int right = direction.getRightValue( getMaze() );
 
 		boolean canLeft = left >= 0;
 		boolean canRight = right >= 0;
 		boolean canForward = front >= 0;
 
-		if( canForward && (!canLeft || front <= left) && (!canRight || front <= right) ) {
+		if( forward && canForward && (!canLeft || front <= left) && (!canRight || front <= right) ) {
 			return;
 		} else {
 			if( canRight && (!canLeft || right <= left) ) {
