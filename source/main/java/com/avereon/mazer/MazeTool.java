@@ -76,6 +76,11 @@ public class MazeTool extends ProgramTool {
 		pane.setBorder( new Border( new BorderStroke( Color.TRANSPARENT, BorderStrokeStyle.NONE, CornerRadii.EMPTY, new BorderWidths( UiFactory.PAD ) ) ) );
 
 		getChildren().addAll( pane );
+
+		setFocused( true );
+		grid.setOnScroll( (e) -> {
+			log.info( "Scroll event " + e );
+		} );
 	}
 
 	@Override
