@@ -78,7 +78,7 @@ public class MazeTool extends ProgramTool {
 		getChildren().addAll( pane );
 
 		setFocused( true );
-		grid.setOnScroll( (e) -> {
+		grid.setOnScroll( ( e ) -> {
 			log.info( "Scroll event " + e );
 		} );
 	}
