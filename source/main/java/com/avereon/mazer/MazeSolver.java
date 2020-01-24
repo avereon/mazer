@@ -17,6 +17,8 @@ public abstract class MazeSolver extends ProgramTask<Void> {
 
 	private boolean running;
 
+	private int speed;
+
 	private final Object stoplock = new Object();
 
 	public MazeSolver( Program program, Product product, MazeTool tool ) {
@@ -41,6 +43,14 @@ public abstract class MazeSolver extends ProgramTask<Void> {
 	public final MazeSolver setMaze( Maze maze ) {
 		this.maze = maze;
 		return this;
+	}
+
+	public int getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed( int speed ) {
+		this.speed = speed;
 	}
 
 	@Override

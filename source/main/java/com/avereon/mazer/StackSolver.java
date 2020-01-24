@@ -64,7 +64,7 @@ public class StackSolver extends MazeSolver {
 	}
 
 	private void determineMove( boolean forward ) {
-		ThreadUtil.pause( 50 );
+		ThreadUtil.pause( 1000 / getSpeed() );
 		Direction direction = getMaze().getDirection();
 		int left = direction.getLeftValue( getMaze() );
 		int front = direction.getFrontValue( getMaze() );

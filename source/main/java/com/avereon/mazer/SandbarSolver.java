@@ -63,7 +63,7 @@ public class SandbarSolver extends MazeSolver {
 				// Update the map
 				map[ getMaze().getX() ][ getMaze().getY() ]++;
 			}
-			ThreadUtil.pause( 50 );
+			ThreadUtil.pause( 1000 / getSpeed() );
 		}
 	}
 

@@ -55,7 +55,7 @@ public class WanderingSolver extends MazeSolver {
 					return;
 				}
 			}
-			ThreadUtil.pause( 50 );
+			ThreadUtil.pause( 1000 / getSpeed() );
 		}
 
 	}

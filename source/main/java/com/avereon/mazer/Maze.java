@@ -31,9 +31,9 @@ public class Maze extends Node {
 
 	private static final int MIN_HEIGHT = 1;
 
-	private static final int DEFAULT_WIDTH = 10;
+	static final int DEFAULT_WIDTH = 10;
 
-	private static final int DEFAULT_HEIGHT = 10;
+	static final int DEFAULT_HEIGHT = 10;
 
 	private int steps;
 

@@ -1,6 +1,7 @@
 package com.avereon.mazer;
 
 import com.avereon.util.LogUtil;
+import com.avereon.venza.javafx.FxUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
@@ -15,6 +16,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -38,7 +41,13 @@ public class MazeTool extends ProgramTool {
 
 	private RunPauseAction runAction;
 
+	private TextField mazeWidth;
+
+	private TextField mazeHeight;
+
 	private ComboBox<String> chooser;
+
+	private Spinner<Integer> solverSpeed;
 
 	private Label steps;
 
@@ -60,15 +69,17 @@ public class MazeTool extends ProgramTool {
 
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
+		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
+
 		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
 		resetAction = new ResetAction( product.getProgram() );
 		runAction = new RunPauseAction( product.getProgram() );
 
-		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
-
-		grid = new GridPane();
-		grid.setAlignment( Pos.CENTER );
+		mazeWidth = new TextField( String.valueOf( Maze.DEFAULT_WIDTH ) );
+		mazeWidth.setOnAction( e -> getMaze().setSize( Integer.parseInt( mazeWidth.getText() ), getMaze().getHeight() ) );
+		mazeHeight = new TextField( String.valueOf( Maze.DEFAULT_HEIGHT ) );
+		mazeHeight.setOnAction( e -> getMaze().setSize( getMaze().getWidth(), Integer.parseInt( mazeHeight.getText() ) ) );
 
 		chooser = new ComboBox<>();
 		chooser.getItems().add( getProduct().rb().text( BundleKey.LABEL, "solver.stack" ) );
@@ -76,9 +87,19 @@ public class MazeTool extends ProgramTool {
 		chooser.getItems().add( getProduct().rb().text( BundleKey.LABEL, "solver.random" ) );
 		chooser.getSelectionModel().select( 0 );
 
+		solverSpeed = new Spinner<>( 10, 100, 10 );
+		solverSpeed.valueProperty().addListener( ( o, d, n ) -> getSolver().setSpeed( n ) );
+
+		grid = new GridPane();
+		grid.setAlignment( Pos.CENTER );
+
 		steps = new Label( getProduct().rb().text( BundleKey.PROMPT, "steps" ) + 0 );
 
-		BorderPane pane = new BorderPane( grid, chooser, null, steps, null );
+		HBox hbox = new HBox( new Label( "Width: " ), mazeWidth, new Label( "Height: " ), mazeHeight, new Label( "Speed:" ), solverSpeed, chooser );
+		hbox.setAlignment( Pos.BASELINE_LEFT );
+		hbox.setSpacing( UiFactory.PAD );
+
+		BorderPane pane = new BorderPane( grid, hbox, null, steps, null );
 		pane.setBorder( new Border( new BorderStroke( Color.TRANSPARENT, BorderStrokeStyle.NONE, CornerRadii.EMPTY, new BorderWidths( UiFactory.PAD ) ) ) );
 
 		getChildren().addAll( pane );
@@ -114,6 +135,7 @@ public class MazeTool extends ProgramTool {
 
 	public void setSolver( MazeSolver solver ) {
 		this.solver = solver;
+		solver.setSpeed( solverSpeed.getValue() );
 	}
 
 	@Override
@@ -126,6 +148,9 @@ public class MazeTool extends ProgramTool {
 		Maze maze = getMaze();
 		int width = maze.getWidth();
 		int height = maze.getHeight();
+
+		this.mazeWidth.setText( String.valueOf( width ) );
+		this.mazeHeight.setText( String.valueOf( height ) );
 
 		if( cells == null || cells.length != width || cells[ 0 ].length != height ) rebuildGrid();
 
@@ -310,6 +335,15 @@ public class MazeTool extends ProgramTool {
 					maze.reset();
 				}
 
+			} );
+
+			setOnMouseDragged( ( e ) -> {
+				Cell cell = (Cell)FxUtil.pick( getParent(), e.getSceneX(), e.getSceneY() );
+				if( cell != null && e.isPrimaryButtonDown() ) {
+					int newState = MazeConfig.HOLE;
+					if( e.isControlDown() ) newState = MazeConfig.STEP;
+					maze.setCellConfig( cell.x, cell.y, newState );
+				}
 			} );
 		}
 
