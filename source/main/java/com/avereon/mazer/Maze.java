@@ -9,6 +9,14 @@ import org.slf4j.Logger;
 
 import java.lang.invoke.MethodHandles;
 
+/**
+ * The Maze class is the data model used for the Maze asset type, asset and
+ * tool. It subclasses {@link com.avereon.xenon.node.Node} to utilize the
+ * functionality provided in Node that simplifies the management of attributes,
+ * data structure and the modified flag. Since all assets are also Nodes, if the
+ * asset data model is also a Node then the modified flag is automatically
+ * managed by the Node logic.
+ */
 public class Maze extends Node {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );

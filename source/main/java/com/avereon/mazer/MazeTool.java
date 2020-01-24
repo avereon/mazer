@@ -5,7 +5,6 @@ import com.avereon.venza.javafx.FxUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.application.Platform;
@@ -27,6 +26,14 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The maze tool edit a maze and runs a maze solver for the maze.
+ * <p>
+ * This tool is part of an example mod for
+ * <a href="https://www.avereon.com/product/xenon">Xenon</a>. The tool
+ * demonstrates various capabilities and practices common to Xenon tools.
+ * </p>
+ */
 public class MazeTool extends ProgramTool {
 
 	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
@@ -34,8 +41,6 @@ public class MazeTool extends ProgramTool {
 	private static final int DEFAULT_ZOOM = 20;
 
 	private static Map<Integer, Background> backgrounds;
-
-	private MazePropertiesAction mazePropertiesAction;
 
 	private ResetAction resetAction;
 
@@ -61,18 +66,35 @@ public class MazeTool extends ProgramTool {
 
 	static {
 		backgrounds = new HashMap<>();
-		backgrounds.put( MazeConfig.STEP, createBackground( "#80808080" ) );
-		backgrounds.put( MazeConfig.HOLE, createBackground( "#00000000" ) );
+		backgrounds.put( MazeConfig.STEP, createBackground( "#80404020" ) );
+		backgrounds.put( MazeConfig.HOLE, createBackground( "#808080C0" ) );
 		backgrounds.put( MazeConfig.COOKIE, createBackground( "#806000C0" ) );
 		backgrounds.put( MazeConfig.MONSTER, createBackground( "#00800080" ) );
 	}
 
+	/**
+	 * Create a maze tool.
+	 * <p>
+	 * The constructor of any tool requires the product associated with this tool,
+	 * the Mazer mod in this case, as well as the asset this tool will be working
+	 * on. This tool should have been registered to only work on MazeAssetType
+	 * assets so that the asset provided to the tool will be a maze asset.
+	 * </p>
+	 *
+	 * @param product The product associated with the tool
+	 * @param asset The asset the tool will work on
+	 */
 	public MazeTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
+
+		/**
+		 // It is common to use an icon from the icon library as the tool icon. The
+		 // icon to be used must be registered in the icon library to be available.
+		 // {@link com.avereon.mazer.Mazer}
+		 */
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 
-		mazePropertiesAction = new MazePropertiesAction( product.getProgram() );
 		resetAction = new ResetAction( product.getProgram() );
 		runAction = new RunPauseAction( product.getProgram() );
 
@@ -138,11 +160,26 @@ public class MazeTool extends ProgramTool {
 		solver.setSpeed( solverSpeed.getValue() );
 	}
 
+	/**
+	 * Called from the {@link com.avereon.xenon.asset.AssetManager AssetManager}
+	 * when the asset is ready for use by the tool. It should not be assumed the
+	 * asset is ready when the tool constructor is called. Logic requiring the
+	 * asset to be ready should be called after this method has been called.
+	 *
+	 * @param request The OpenAssetRequest that contains information about how the
+	 * asset was requested to be opened.
+	 */
 	@Override
 	protected void assetReady( OpenAssetRequest request ) {
 		assetRefreshed();
 	}
 
+	/**
+	 * Called any time the asset is refreshed. This is an indicator that the asset
+	 * has changed in some way that the tool needs to be aware of. Note that the
+	 * method is not provided any further information about the reason for the
+	 * refresh.
+	 */
 	@Override
 	protected void assetRefreshed() {
 		Maze maze = getMaze();
@@ -172,6 +209,40 @@ public class MazeTool extends ProgramTool {
 		steps.setText( getProduct().rb().text( BundleKey.PROMPT, "steps" ) + maze.getStepCount() );
 	}
 
+	/**
+	 * Called when the tool is activated. It is common for the tool to register
+	 * actions, menu bar items and tool bar items in this method. Any action, menu
+	 * bar item or tool bar item should be removed in the {@link #conceal} method.
+	 *
+	 * @throws ToolException
+	 */
+	@Override
+	protected void activate() throws ToolException {
+		pushAction( "reset", resetAction );
+		pushAction( "runpause", runAction );
+
+		getProgram().getWorkspaceManager().getActiveWorkspace().pushToolbarActions( "reset", "runpause" );
+	}
+
+	/**
+	 * Called when the tool is concealed. It is common for the tool to unregister
+	 * actions and menu bar items and tool bar items that were registered in the
+	 * {@link #activate} method in this method.
+	 *
+	 * @throws ToolException
+	 */
+	@Override
+	protected void conceal() throws ToolException {
+		getProgram().getWorkspaceManager().getActiveWorkspace().pullToolbarActions();
+
+		pullAction( "reset", resetAction );
+		pullAction( "runpause", runAction );
+	}
+
+	private Maze getMaze() {
+		return (Maze)getAsset().getModel();
+	}
+
 	private void rebuildGrid() {
 		grid.getChildren().clear();
 
@@ -184,53 +255,6 @@ public class MazeTool extends ProgramTool {
 				grid.add( cells[ x ][ y ] = new Cell( maze, x, y ), x, y );
 			}
 		}
-	}
-
-	@Override
-	protected void activate() throws ToolException {
-		pushAction( "properties", mazePropertiesAction );
-		//pushAction( "undo", resetAction );
-		//pushAction( "redo", runAction );
-		pushAction( "reset", resetAction );
-		pushAction( "runpause", runAction );
-
-		getProgram().getWorkspaceManager().getActiveWorkspace().pushToolbarActions( "reset", "runpause" );
-	}
-
-	@Override
-	protected void conceal() throws ToolException {
-		getProgram().getWorkspaceManager().getActiveWorkspace().pullToolbarActions();
-
-		pullAction( "properties", mazePropertiesAction );
-		//pullAction( "undo", resetAction );
-		//pullAction( "redo", runAction );
-		pullAction( "reset", resetAction );
-		pullAction( "runpause", runAction );
-	}
-
-	private Maze getMaze() {
-		return (Maze)getAsset().getModel();
-	}
-
-	// TODO Since this is more of an asset action and not a tool action it may
-	// be more appropriate to move this to the asset manager.
-	private static class MazePropertiesAction extends Action {
-
-		private MazePropertiesAction( Program program ) {
-			super( program );
-		}
-
-		@Override
-		public boolean isEnabled() {
-			return true;
-		}
-
-		@Override
-		public void handle( ActionEvent event ) {
-			// TODO Open the properties tool with this tool's asset's properties.
-			getProgram().getNoticeManager().addNotice( new Notice( "Maze Tool", "Opening the asset properties..." ) );
-		}
-
 	}
 
 	private class ResetAction extends Action {
@@ -295,12 +319,14 @@ public class MazeTool extends ProgramTool {
 	}
 
 	private static Background createBackground( String color ) {
-		return new Background( new BackgroundFill( Color.web( color ), CornerRadii.EMPTY, Insets.EMPTY ) );
+		return createBackground( Color.web( color ) );
+	}
+
+	private static Background createBackground( Color color ) {
+		return new Background( new BackgroundFill( color, CornerRadii.EMPTY, Insets.EMPTY ) );
 	}
 
 	private static class Cell extends Region {
-
-		private Maze maze;
 
 		private int x;
 
@@ -308,12 +334,9 @@ public class MazeTool extends ProgramTool {
 
 		private int visits;
 
-		private int config;
-
 		private Background visited = createBackground( "#80000040" );
 
 		public Cell( Maze maze, int x, int y ) {
-			this.maze = maze;
 			this.x = x;
 			this.y = y;
 			setBackground( backgrounds.get( MazeConfig.STEP ) );
@@ -348,11 +371,10 @@ public class MazeTool extends ProgramTool {
 		}
 
 		public void setConfig( int config ) {
-			this.config = config;
 			setBackground( backgrounds.get( config ) );
-
-			if( config == MazeConfig.STEP || config == MazeConfig.MONSTER ) {
-				if( visits > 0 ) setBackground( visited );
+			if( visits > 0 && config == MazeConfig.STEP || config == MazeConfig.MONSTER ) {
+				double alpha = Math.min( 1.0, visits * 0.1 );
+				setBackground( createBackground( Color.color( 0, 0.5, 0.5, alpha ) ) );
 			}
 		}
 

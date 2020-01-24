@@ -8,6 +8,12 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * The MazerIcon subclasses {@link ProgramIcon} to provide a custom, scalable
+ * icon for the Mazer mod. This icon should be registered with Xenon when the
+ * {@link Mazer} mod is registered and unregistered when the {@link Mazer} mod
+ * is unregistered.
+ */
 public class MazerIcon extends ProgramIcon {
 
 	private double mouthAngle = 30;
