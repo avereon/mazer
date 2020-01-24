@@ -7,11 +7,15 @@ import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.tool.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
+import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
@@ -42,7 +46,7 @@ public class MazeTool extends ProgramTool {
 
 	private Cell[][] cells;
 
-	private int zoom = DEFAULT_ZOOM;
+	private IntegerProperty zoom;
 
 	private MazeSolver solver;
 
@@ -61,6 +65,8 @@ public class MazeTool extends ProgramTool {
 		resetAction = new ResetAction( product.getProgram() );
 		runAction = new RunPauseAction( product.getProgram() );
 
+		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
+
 		grid = new GridPane();
 		grid.setAlignment( Pos.CENTER );
 
@@ -77,30 +83,60 @@ public class MazeTool extends ProgramTool {
 
 		getChildren().addAll( pane );
 
-		setFocused( true );
-		grid.setOnScroll( ( e ) -> {
-			log.info( "Scroll event " + e );
+		addEventFilter( ScrollEvent.SCROLL, e -> {
+			if( e.getDeltaY() == 0 ) return;
+			Platform.runLater( () -> {
+				int increment = 0;
+				if( e.getDeltaY() < 0 ) increment = -1;
+				if( e.getDeltaY() > 0 ) increment = 1;
+				setZoom( getZoom() + increment );
+			} );
 		} );
 	}
 
+	public int getZoom() {
+		return zoom.get();
+	}
+
+	public void setZoom( int zoom ) {
+		if( zoom < 1 ) zoom = 1;
+		this.zoom.set( zoom );
+		assetRefreshed();
+	}
+
+	public IntegerProperty zoomProperty() {
+		return zoom;
+	}
+
+	public MazeSolver getSolver() {
+		return solver;
+	}
+
+	public void setSolver( MazeSolver solver ) {
+		this.solver = solver;
+	}
+
 	@Override
-	protected void assetReady( OpenAssetRequest request ) throws ToolException {
+	protected void assetReady( OpenAssetRequest request ) {
 		assetRefreshed();
 	}
 
 	@Override
-	protected void assetRefreshed() throws ToolException {
+	protected void assetRefreshed() {
 		Maze maze = getMaze();
 		int width = maze.getWidth();
 		int height = maze.getHeight();
 
 		if( cells == null || cells.length != width || cells[ 0 ].length != height ) rebuildGrid();
 
+		double zoomX = getZoom() / getScene().getWindow().getOutputScaleX();
+		double zoomY = getZoom() / getScene().getWindow().getOutputScaleY();
+
 		for( int x = 0; x < width; x++ ) {
 			for( int y = 0; y < height; y++ ) {
 				int config = maze.getCellConfig( x, y );
 				Cell cell = cells[ x ][ y ];
-				cell.setSize( zoom );
+				cell.setPrefSize( zoomX, zoomY );
 				cell.setConfig( config == MazeConfig.COOKIE ? MazeConfig.STEP : config );
 				cell.setVisits( maze.get( x, y ) );
 			}
@@ -149,14 +185,6 @@ public class MazeTool extends ProgramTool {
 
 	private Maze getMaze() {
 		return (Maze)getAsset().getModel();
-	}
-
-	public MazeSolver getSolver() {
-		return solver;
-	}
-
-	public void setSolver( MazeSolver solver ) {
-		this.solver = solver;
 	}
 
 	// TODO Since this is more of an asset action and not a tool action it may
@@ -253,8 +281,6 @@ public class MazeTool extends ProgramTool {
 
 		private int y;
 
-		private int size;
-
 		private int visits;
 
 		private int config;
@@ -285,16 +311,6 @@ public class MazeTool extends ProgramTool {
 				}
 
 			} );
-		}
-
-		public int getSize() {
-			return size;
-		}
-
-		public Cell setSize( int size ) {
-			setPrefSize( size, size );
-			this.size = size;
-			return this;
 		}
 
 		public void setConfig( int config ) {
