@@ -20,6 +20,10 @@ public class Mazer extends Mod {
 
 	private MazeAssetType mazeAssetType;
 
+	public Mazer() {
+		mazeAssetType = new MazeAssetType( this );
+	}
+
 	/**
 	 * Called when the mod is registered with the program. It is common to
 	 * register custom icons, actions, asset types and tools in this method.
@@ -33,7 +37,7 @@ public class Mazer extends Mod {
 		registerAction( this.rb(), "reset" );
 		registerAction( this.rb(), "runpause" );
 
-		registerAssetType( mazeAssetType = new MazeAssetType( this ) );
+		registerAssetType( mazeAssetType );
 		registerTool( mazeAssetType, new ToolRegistration( this, MazeTool.class ) );
 	}
 
