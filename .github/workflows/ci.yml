@@ -2,7 +2,11 @@ name: Avereon Mazer Continuous
 
 on:
   push:
+    branches:
+      - master
   pull_request:
+    branches:
+      - stable
   schedule:
     - cron: '30 12 * * *'
 
