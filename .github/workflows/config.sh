@@ -14,7 +14,7 @@ case "${GITHUB_REF}" in
   "refs/heads/master") AVN_RELEASE="latest" ;;
   "refs/heads/stable") AVN_RELEASE="stable" ;;
 esac
-export PRODUCT_DEPLOY_PATH=/opt/avn/store/${AVN_RELEASE}/${AVN_PRODUCT}/${AVN_PLATFORM}
+export PRODUCT_DEPLOY_PATH=/opt/avn/store/${AVN_RELEASE}/${AVN_PRODUCT}
 
 echo "Build date=$(date)"
 echo "GITHUB_REF=${GITHUB_REF}"
