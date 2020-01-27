@@ -81,6 +81,10 @@ jobs:
         run: |
           scp -B target/*product.jar ${{env.AVN_REPO_USERNAME}}@avereon.com:${PRODUCT_DEPLOY_PATH} 2>&1
 
+      - name: Deploy Product Icon
+        run: |
+          scp -B target/main/images/*product.png ${{env.AVN_REPO_USERNAME}}@avereon.com:${PRODUCT_DEPLOY_PATH} 2>&1
+
       - name: Deploy Product Card
         run: |
           scp -B target/main/java/META-INF/*.card ${{env.AVN_REPO_USERNAME}}@avereon.com:${PRODUCT_DEPLOY_PATH} 2>&1

@@ -51,7 +51,7 @@ public class MazerIcon extends ProgramIcon {
 	}
 
 	public static void main( String[] args ) {
-		save( new MazerIcon(), "target/icons/mazer.png" );
+		//save( new MazerIcon(), "target/icons/mazer.png" );
 		proof( new MazerIcon() );
 		wrapup();
 	}
