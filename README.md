@@ -1,4 +1,4 @@
-[build-status]: https://github.com/avereon/mazer/workflows/Avereon%20Mazer%20CI/badge.svg "Build status"
+[build-status]: https://github.com/avereon/mazer/workflows/Avereon%20Mazer%20Continuous/badge.svg "Build status"
 
 # Mazer ![alt text][build-status]
 
