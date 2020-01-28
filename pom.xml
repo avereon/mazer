@@ -77,7 +77,7 @@
 								<configuration>
 									<images>
 										<image>
-											<class>com.avereon.arena.ArenaIcon</class>
+											<class>com.avereon.mazer.MazerIcon</class>
 											<target>${images-folder}/product.png</target>
 										</image>
 									</images>
