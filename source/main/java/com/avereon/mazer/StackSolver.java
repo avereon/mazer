@@ -49,7 +49,7 @@ public class StackSolver extends MazeSolver {
 			stack.push( new State( getMaze() ) );
 			getMaze().move();
 		} catch( MoveException exception ) {
-			getProgram().getNoticeManager().error( exception );
+			log.log( Log.ERROR, exception );
 		}
 	}
 

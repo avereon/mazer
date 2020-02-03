@@ -50,7 +50,7 @@ public class WanderingSolver extends MazeSolver {
 				try {
 					getMaze().move();
 				} catch( MoveException exception ) {
-					getProgram().getNoticeManager().error( exception );
+					log.log( Log.ERROR, exception );
 					return;
 				}
 			}
