@@ -20,9 +20,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import org.slf4j.Logger;
 
-import java.lang.invoke.MethodHandles;
+import java.lang.System.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +35,7 @@ import java.util.Map;
  */
 public class MazeTool extends ProgramTool {
 
-	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.log();
 
 	private static final int DEFAULT_ZOOM = 20;
 

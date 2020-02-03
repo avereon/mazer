@@ -5,9 +5,8 @@ import com.avereon.xenon.node.Node;
 import com.avereon.xenon.transaction.Txn;
 import com.avereon.xenon.transaction.TxnEvent;
 import com.avereon.xenon.transaction.TxnException;
-import org.slf4j.Logger;
 
-import java.lang.invoke.MethodHandles;
+import java.lang.System.Logger;
 
 /**
  * The Maze class is the data model used for the Maze asset type, asset and
@@ -19,7 +18,7 @@ import java.lang.invoke.MethodHandles;
  */
 public class Maze extends Node {
 
-	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.log();
 
 	private static final int UNVISITED = 0;
 
@@ -75,7 +74,7 @@ public class Maze extends Node {
 			}
 			Txn.commit();
 		} catch( Exception exception ) {
-			log.warn( "Error changing maze size", exception );
+			log.log( Log.WARN, "Error changing maze size", exception );
 		}
 	}
 
@@ -99,7 +98,7 @@ public class Maze extends Node {
 			putResource( COOKIE_Y, y );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.error( "Error setting cookie location", exception );
+			log.log( Log.ERROR, "Error setting cookie location", exception );
 		}
 	}
 

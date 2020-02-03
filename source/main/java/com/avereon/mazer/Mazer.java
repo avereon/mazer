@@ -5,9 +5,8 @@ import com.avereon.rossa.icon.PlayIcon;
 import com.avereon.util.Log;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.tool.ToolRegistration;
-import org.slf4j.Logger;
 
-import java.lang.invoke.MethodHandles;
+import java.lang.System.Logger;
 
 /**
  * The Mazer mod. This mod is part of an example mod for
@@ -16,7 +15,7 @@ import java.lang.invoke.MethodHandles;
  */
 public class Mazer extends Mod {
 
-	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.log();
 
 	private MazeAssetType mazeAssetType;
 

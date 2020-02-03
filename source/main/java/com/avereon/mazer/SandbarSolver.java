@@ -5,16 +5,15 @@ import com.avereon.util.Log;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.Program;
-import org.slf4j.Logger;
 
-import java.lang.invoke.MethodHandles;
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class SandbarSolver extends MazeSolver {
 
-	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.log();
 
 	private int[][] map;
 

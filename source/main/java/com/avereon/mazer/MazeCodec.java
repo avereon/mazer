@@ -4,15 +4,14 @@ import com.avereon.product.Product;
 import com.avereon.util.Log;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
-import org.slf4j.Logger;
 
 import java.io.*;
-import java.lang.invoke.MethodHandles;
+import java.lang.System.Logger;
 import java.nio.charset.StandardCharsets;
 
 public class MazeCodec extends Codec {
 
-	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.log();
 
 	private Product product;
 
@@ -43,7 +42,7 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void load( Asset asset, InputStream input ) throws IOException {
-		log.warn( "Loading maze: " + asset );
+		log.log( Log.WARN, "Loading maze: " + asset );
 
 		BufferedReader reader = new BufferedReader( new InputStreamReader( input, StandardCharsets.UTF_8 ) );
 
@@ -90,7 +89,7 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void save( Asset asset, OutputStream output ) throws IOException {
-		log.warn( "Saving asset: " + asset );
+		log.log( Log.WARN, "Saving asset: " + asset );
 		try {
 			Maze maze = asset.getModel();
 			int width = maze.getWidth();
@@ -104,11 +103,11 @@ public class MazeCodec extends Codec {
 					int state = maze.getCellConfig( x, y );
 					if( state != MazeConfig.STEP ) {
 						switch( state ) {
-							case MazeConfig.HOLE : {
+							case MazeConfig.HOLE: {
 								printer.println( "H " + x + "," + y );
 								break;
 							}
-							case MazeConfig.MONSTER : {
+							case MazeConfig.MONSTER: {
 								printer.println( "M " + x + "," + y );
 								break;
 							}
