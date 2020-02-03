@@ -2,7 +2,7 @@ package com.avereon.mazer;
 
 import com.avereon.rossa.icon.PauseIcon;
 import com.avereon.rossa.icon.PlayIcon;
-import com.avereon.util.LogUtil;
+import com.avereon.util.Log;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.tool.ToolRegistration;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ import java.lang.invoke.MethodHandles;
  */
 public class Mazer extends Mod {
 
-	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
 
 	private MazeAssetType mazeAssetType;
 

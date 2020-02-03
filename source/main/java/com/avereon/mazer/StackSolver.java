@@ -1,7 +1,7 @@
 package com.avereon.mazer;
 
 import com.avereon.product.Product;
-import com.avereon.util.LogUtil;
+import com.avereon.util.Log;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.Program;
@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class StackSolver extends MazeSolver {
 
-	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
 
 	private Deque<State> stack = new LinkedBlockingDeque<>();
 

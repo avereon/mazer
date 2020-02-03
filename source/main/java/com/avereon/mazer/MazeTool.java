@@ -1,6 +1,6 @@
 package com.avereon.mazer;
 
-import com.avereon.util.LogUtil;
+import com.avereon.util.Log;
 import com.avereon.venza.javafx.FxUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class MazeTool extends ProgramTool {
 
-	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
 
 	private static final int DEFAULT_ZOOM = 20;
 

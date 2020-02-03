@@ -1,6 +1,6 @@
 package com.avereon.mazer;
 
-import com.avereon.util.LogUtil;
+import com.avereon.util.Log;
 import com.avereon.xenon.node.Node;
 import com.avereon.xenon.transaction.Txn;
 import com.avereon.xenon.transaction.TxnEvent;
@@ -19,7 +19,7 @@ import java.lang.invoke.MethodHandles;
  */
 public class Maze extends Node {
 
-	private static final Logger log = LogUtil.get( MethodHandles.lookup().lookupClass() );
+	private static final Logger log = Log.get( MethodHandles.lookup().lookupClass() );
 
 	private static final int UNVISITED = 0;
 
