@@ -1,16 +1,16 @@
 package com.avereon.mazer;
 
 import com.avereon.util.Log;
-import com.avereon.xenon.node.Node;
-import com.avereon.xenon.transaction.Txn;
-import com.avereon.xenon.transaction.TxnEvent;
-import com.avereon.xenon.transaction.TxnException;
+import com.avereon.data.Node;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnEvent;
+import com.avereon.transaction.TxnException;
 
 import java.lang.System.Logger;
 
 /**
  * The Maze class is the data model used for the Maze asset type, asset and
- * tool. It subclasses {@link com.avereon.xenon.node.Node} to utilize the
+ * tool. It subclasses {@link Node} to utilize the
  * functionality provided in Node that simplifies the management of attributes,
  * data structure and the modified flag. Since all assets are also Nodes, if the
  * asset data model is also a Node then the modified flag is automatically
