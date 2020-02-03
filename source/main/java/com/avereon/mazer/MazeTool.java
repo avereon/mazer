@@ -5,7 +5,7 @@ import com.avereon.venza.javafx.FxUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.tool.ProgramTool;
+import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;

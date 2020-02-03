@@ -4,7 +4,7 @@ import com.avereon.rossa.icon.PauseIcon;
 import com.avereon.rossa.icon.PlayIcon;
 import com.avereon.util.Log;
 import com.avereon.xenon.Mod;
-import com.avereon.xenon.tool.ToolRegistration;
+import com.avereon.xenon.ToolRegistration;
 
 import java.lang.System.Logger;
 
