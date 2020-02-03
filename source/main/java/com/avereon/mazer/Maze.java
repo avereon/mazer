@@ -214,17 +214,17 @@ public class Maze extends Node {
 	}
 
 	public void turnLeft() {
-		//log.info( "Turn left..." );
+		//log.log( Log.INFO,  "Turn left..." );
 		getDirection().turnLeft( this );
 	}
 
 	public void turnRight() {
-		//log.info( "Turn right..." );
+		//log.log( Log.INFO,  "Turn right..." );
 		getDirection().turnRight( this );
 	}
 
 	public void move() throws MoveException {
-		//log.info( "Move forward..." );
+		//log.log( Log.INFO,  "Move forward..." );
 		move( 1 );
 	}
 
@@ -235,7 +235,7 @@ public class Maze extends Node {
 	@Override
 	public void dispatch( TxnEvent event ) {
 		super.dispatch( event );
-		//log.warn( "Maze " + event.getEventType() + ": " + event );
+		//log.log( Log.WARN,  "Maze " + event.getEventType() + ": " + event );
 	}
 
 }
