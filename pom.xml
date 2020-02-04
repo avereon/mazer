@@ -20,7 +20,7 @@
 	<packaging>jar</packaging>
 
 	<name>Mazer</name>
-	<description>Xenon mod that implements maze solving algorithms</description>
+	<description>Create, edit and solve simple mazes</description>
 	<inceptionYear>2019</inceptionYear>
 
 	<repositories>
