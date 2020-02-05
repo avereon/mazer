@@ -10,7 +10,7 @@ class MazeAssetTypeTest extends BaseMazerTest {
 	@Test
 	void testConstructor() {
 		MazeAssetType type = new MazeAssetType( mazer );
-		assertThat( type.getKey(), is( "com.avereon.mazer.MazeAssetType" ) );
+		assertThat( type.getKey(), is( "application/vnd.avereon.mazer.maze" ) );
 		assertThat( type.getName(), is( "Mazer Maze" ));
 	}
 
