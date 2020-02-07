@@ -1,7 +1,5 @@
 package com.avereon.mazer;
 
-import com.avereon.rossa.icon.PauseIcon;
-import com.avereon.rossa.icon.PlayIcon;
 import com.avereon.util.Log;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
@@ -30,8 +28,6 @@ public class Mazer extends Mod {
 	@Override
 	public void register() {
 		registerIcon( "mazer", MazerIcon.class );
-		registerIcon( "play", PlayIcon.class );
-		registerIcon( "pause", PauseIcon.class );
 
 		registerAction( this.rb(), "reset" );
 		registerAction( this.rb(), "runpause" );
@@ -68,8 +64,6 @@ public class Mazer extends Mod {
 		unregisterAction( "runpause" );
 		unregisterAction( "reset" );
 
-		unregisterIcon( "pause", PauseIcon.class );
-		unregisterIcon( "play", PlayIcon.class );
 		unregisterIcon( "mazer", MazerIcon.class );
 	}
 
