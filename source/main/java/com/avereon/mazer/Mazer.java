@@ -22,11 +22,18 @@ public class Mazer extends Mod {
 	}
 
 	/**
-	 * Called when the mod is registered with the program. It is common to
-	 * register custom icons, actions, asset types and tools in this method.
+	 * Called when the mod is registered with the program.
 	 */
 	@Override
-	public void register() {
+	public void register() {}
+
+	/**
+	 * Called when the mod is started. It is common to register custom icons,
+	 * actions, asset types, tools and long running items like timers,
+	 * tasks and other threads in this method.
+	 */
+	@Override
+	public void startup() {
 		registerIcon( "mazer", MazerIcon.class );
 
 		registerAction( this.rb(), "reset" );
@@ -37,27 +44,12 @@ public class Mazer extends Mod {
 	}
 
 	/**
-	 * Called when the mod is allowed to start long running items like timers,
-	 * tasks and other threads. Since this mod does not have a need for any long
-	 * running items, it is empty.
+	 * Called when the mod should shut down. It is common to unregister custom
+	 * icons, actions, asset types, tools and long running items like timers,
+	 * tasks and other threads in this method.
 	 */
 	@Override
-	public void startup() {}
-
-	/**
-	 * Called when the mod should shut down any long running items like timers,
-	 * tasks and other threads. Since this mod does not have any long running
-	 * items, it is empty.
-	 */
-	@Override
-	public void shutdown() {}
-
-	/**
-	 * Called when the mod is unregistered from the program. It is common to
-	 * unregister custom icons, actions, asset types and tools in this method.
-	 */
-	@Override
-	public void unregister() {
+	public void shutdown() {
 		unregisterTool( mazeAssetType, MazeTool.class );
 		unregisterAssetType( mazeAssetType );
 
@@ -66,5 +58,11 @@ public class Mazer extends Mod {
 
 		unregisterIcon( "mazer", MazerIcon.class );
 	}
+
+	/**
+	 * Called when the mod is unregistered from the program.
+	 */
+	@Override
+	public void unregister() {}
 
 }
