@@ -42,7 +42,7 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void load( Asset asset, InputStream input ) throws IOException {
-		log.log( Log.WARN, "Loading maze: " + asset );
+		log.log( Log.DEBUG, "Loading maze: " + asset );
 
 		BufferedReader reader = new BufferedReader( new InputStreamReader( input, StandardCharsets.UTF_8 ) );
 
@@ -89,7 +89,7 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void save( Asset asset, OutputStream output ) throws IOException {
-		log.log( Log.WARN, "Saving asset: " + asset );
+		log.log( Log.DEBUG, "Saving maze: " + asset );
 		try {
 			Maze maze = asset.getModel();
 			int width = maze.getWidth();

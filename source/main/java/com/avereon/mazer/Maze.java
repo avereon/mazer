@@ -34,6 +34,12 @@ public class Maze extends Node {
 
 	private static final String COLOR_SCALE = "color-scale";
 
+	private static final String START_X = "start-x";
+
+	private static final String START_Y = "start-y";
+
+	private static final String START_DIRECTION = "start-direction";
+
 	private static final int MIN_WIDTH = 1;
 
 	private static final int MIN_HEIGHT = 1;
@@ -45,6 +51,7 @@ public class Maze extends Node {
 	private int steps;
 
 	public Maze() {
+		addModifyingKeys( WIDTH, HEIGHT, START_DIRECTION );
 		setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );
 		setStartDirection( Direction.EAST );
 		setCookieStart( 0, 0 );
@@ -69,6 +76,7 @@ public class Maze extends Node {
 			setValue( HEIGHT, height );
 			for( int x = 0; x < width; x++ ) {
 				for( int y = 0; y < height; y++ ) {
+					addModifyingKeys( "cell-" + x + "-" + y );
 					setCellConfig( x, y, MazeConfig.STEP );
 				}
 			}
@@ -79,11 +87,11 @@ public class Maze extends Node {
 	}
 
 	public int getX() {
-		return getResource( COOKIE_X );
+		return getValue( COOKIE_X );
 	}
 
 	public int getY() {
-		return getResource( COOKIE_Y );
+		return getValue( COOKIE_Y );
 	}
 
 	public boolean isCookie( int x, int y ) {
@@ -94,8 +102,8 @@ public class Maze extends Node {
 		try {
 			set( x, y, get( x, y ) + 1 );
 			Txn.create();
-			putResource( COOKIE_X, x );
-			putResource( COOKIE_Y, y );
+			setValue( COOKIE_X, x );
+			setValue( COOKIE_Y, y );
 			Txn.commit();
 		} catch( TxnException exception ) {
 			log.log( Log.ERROR, "Error setting cookie location", exception );
@@ -113,18 +121,18 @@ public class Maze extends Node {
 	}
 
 	public int getCookieStartX() {
-		return getValue( "cookie-start-x", 0 );
+		return getValue( START_X, 0 );
 	}
 
 	public int getCookieStartY() {
-		return getValue( "cookie-start-y", 0 );
+		return getValue( START_Y, 0 );
 	}
 
 	public void setCookieStart( int x, int y ) {
 		try {
 			Txn.create();
-			setValue( "cookie-start-x", x );
-			setValue( "cookie-start-y", y );
+			setValue( START_X, x );
+			setValue( START_Y, y );
 			Txn.commit();
 		} catch( TxnException exception ) {
 			exception.printStackTrace();
@@ -132,27 +140,27 @@ public class Maze extends Node {
 	}
 
 	public Direction getStartDirection() {
-		return getValue( "direction-start", Direction.EAST );
+		return getValue( START_DIRECTION, Direction.EAST );
 	}
 
 	public void setStartDirection( Direction direction ) {
-		setValue( "direction-start", direction );
+		setValue( START_DIRECTION, direction );
 	}
 
 	public Direction getDirection() {
-		return getResource( DIRECTION );
+		return getValue( DIRECTION );
 	}
 
 	public void setDirection( Direction direction ) {
-		putResource( DIRECTION, direction );
+		setValue( DIRECTION, direction );
 	}
 
 	public double getColorScale() {
-		return getResource( COLOR_SCALE );
+		return getValue( COLOR_SCALE );
 	}
 
 	public void setColorScale( double scale ) {
-		putResource( COLOR_SCALE, scale );
+		setValue( COLOR_SCALE, scale );
 	}
 
 	public int getStepCount() {
@@ -164,11 +172,11 @@ public class Maze extends Node {
 	}
 
 	public int get( int x, int y ) {
-		return getResource( "work-" + x + "-" + y, UNVISITED );
+		return getValue( "work-" + x + "-" + y, UNVISITED );
 	}
 
 	public void set( int x, int y, int value ) {
-		putResource( "work-" + x + "-" + y, value );
+		setValue( "work-" + x + "-" + y, value );
 	}
 
 	public void reset() {

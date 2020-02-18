@@ -48,7 +48,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<!-- Version comes from parent -->
 				<configuration>
-					<!-- The argLine and systemPropertyVariables should match the failsafe configuration below -->
 					<argLine>
 						--add-opens=com.avereon.mazer/com.avereon.mazer=ALL-UNNAMED
 						--add-opens=com.avereon.mazer/com.avereon.mazer.asset=ALL-UNNAMED
