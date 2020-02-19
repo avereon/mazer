@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 public class MazeCodec extends Codec {
 
-	private static final Logger log = Log.log();
+	private static final Logger log = Log.get();
 
 	private Product product;
 

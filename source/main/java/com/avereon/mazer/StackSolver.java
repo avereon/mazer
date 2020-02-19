@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class StackSolver extends MazeSolver {
 
-	private static final Logger log = Log.log();
+	private static final Logger log = Log.get();
 
 	private Deque<State> stack = new LinkedBlockingDeque<>();
 

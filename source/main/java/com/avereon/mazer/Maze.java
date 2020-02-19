@@ -18,7 +18,7 @@ import java.lang.System.Logger;
  */
 public class Maze extends Node {
 
-	private static final Logger log = Log.log();
+	private static final Logger log = Log.get();
 
 	private static final int UNVISITED = 0;
 

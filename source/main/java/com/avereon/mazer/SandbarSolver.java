@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class SandbarSolver extends MazeSolver {
 
-	private static final Logger log = Log.log();
+	private static final Logger log = Log.get();
 
 	private int[][] map;
 

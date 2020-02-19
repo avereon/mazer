@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class WanderingSolver extends MazeSolver {
 
-	private static final Logger log = Log.log();
+	private static final Logger log = Log.get();
 
 	private Random random = new Random();
 

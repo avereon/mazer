@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class MazeTool extends ProgramTool {
 
-	private static final Logger log = Log.log();
+	private static final Logger log = Log.get();
 
 	private static final int DEFAULT_ZOOM = 20;
 

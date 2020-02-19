@@ -13,7 +13,7 @@ import java.lang.System.Logger;
  */
 public class Mazer extends Mod {
 
-	private static final Logger log = Log.log();
+	private static final Logger log = Log.get();
 
 	private MazeAssetType mazeAssetType;
 

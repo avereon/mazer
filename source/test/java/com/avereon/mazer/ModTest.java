@@ -2,7 +2,7 @@ package com.avereon.mazer;
 
 import com.avereon.product.ProductCard;
 import com.avereon.util.DateUtil;
-import com.avereon.util.Version;
+import com.avereon.product.Version;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
