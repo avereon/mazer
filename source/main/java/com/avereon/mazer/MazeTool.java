@@ -220,7 +220,7 @@ public class MazeTool extends ProgramTool {
 		pushAction( "reset", resetAction );
 		pushAction( "runpause", runAction );
 
-		getProgram().getWorkspaceManager().getActiveWorkspace().pushToolbarActions( "reset", "runpause" );
+		pushToolActions( "reset", "runpause" );
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class MazeTool extends ProgramTool {
 	 */
 	@Override
 	protected void conceal() throws ToolException {
-		getProgram().getWorkspaceManager().getActiveWorkspace().pullToolbarActions();
+		pullToolActions();
 
 		pullAction( "reset", resetAction );
 		pullAction( "runpause", runAction );
