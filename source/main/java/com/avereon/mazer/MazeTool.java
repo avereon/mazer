@@ -14,10 +14,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -187,27 +184,29 @@ public class MazeTool extends ProgramTool {
 		int width = maze.getWidth();
 		int height = maze.getHeight();
 
-		this.mazeWidth.setText( String.valueOf( width ) );
-		this.mazeHeight.setText( String.valueOf( height ) );
+		Platform.runLater( () -> {
+			this.mazeWidth.setText( String.valueOf( width ) );
+			this.mazeHeight.setText( String.valueOf( height ) );
 
-		if( cells == null || cells.length != width || cells[ 0 ].length != height ) rebuildGrid();
+			if( cells == null || cells.length != width || cells[ 0 ].length != height ) rebuildGrid();
 
-		double zoomX = getZoom() / getScene().getWindow().getOutputScaleX();
-		double zoomY = getZoom() / getScene().getWindow().getOutputScaleY();
+			double zoomX = getZoom() / getScene().getWindow().getOutputScaleX();
+			double zoomY = getZoom() / getScene().getWindow().getOutputScaleY();
 
-		for( int x = 0; x < width; x++ ) {
-			for( int y = 0; y < height; y++ ) {
-				int config = maze.getCellConfig( x, y );
-				Cell cell = cells[ x ][ y ];
-				cell.setPrefSize( zoomX, zoomY );
-				cell.setConfig( config == MazeConfig.COOKIE ? MazeConfig.STEP : config );
-				cell.setVisits( maze.get( x, y ) );
+			for( int x = 0; x < width; x++ ) {
+				for( int y = 0; y < height; y++ ) {
+					int config = maze.getCellConfig( x, y );
+					Cell cell = cells[ x ][ y ];
+					cell.setPrefSize( zoomX, zoomY );
+					cell.setConfig( config == MazeConfig.COOKIE ? MazeConfig.STEP : config );
+					cell.setVisits( maze.get( x, y ) );
+				}
 			}
-		}
 
-		cells[ maze.getX() ][ maze.getY() ].setConfig( MazeConfig.COOKIE );
+			cells[ maze.getX() ][ maze.getY() ].setConfig( MazeConfig.COOKIE );
 
-		steps.setText( getProduct().rb().text( BundleKey.PROMPT, "steps" ) + maze.getStepCount() );
+			steps.setText( getProduct().rb().text( BundleKey.PROMPT, "steps" ) + maze.getStepCount() );
+		} );
 	}
 
 	/**
