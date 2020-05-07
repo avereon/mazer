@@ -1,11 +1,12 @@
 package com.avereon.mazer;
 
+import com.avereon.data.NodeEvent;
+import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
 import com.avereon.venza.javafx.FxUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -62,6 +63,8 @@ public class MazeTool extends ProgramTool {
 	private IntegerProperty zoom;
 
 	private MazeSolver solver;
+
+	private EventHandler<NodeEvent> modelChangeHandler;
 
 	static {
 		backgrounds = new HashMap<>();
@@ -143,7 +146,7 @@ public class MazeTool extends ProgramTool {
 	public void setZoom( int zoom ) {
 		if( zoom < 1 ) zoom = 1;
 		this.zoom.set( zoom );
-		assetRefreshed();
+		refresh();
 	}
 
 	public IntegerProperty zoomProperty() {
@@ -179,8 +182,7 @@ public class MazeTool extends ProgramTool {
 	 * method is not provided any further information about the reason for the
 	 * refresh.
 	 */
-	@Override
-	protected void assetRefreshed() {
+	private void refresh() {
 		Maze maze = getMaze();
 		int width = maze.getWidth();
 		int height = maze.getHeight();
@@ -223,6 +225,13 @@ public class MazeTool extends ProgramTool {
 		pushToolActions( "reset", "runpause" );
 	}
 
+	@Override
+	protected void allocate() throws ToolException {
+		modelChangeHandler = e -> refresh();
+		Maze maze = getAsset().getModel();
+		maze.register( NodeEvent.NODE_CHANGED, modelChangeHandler );
+	}
+
 	/**
 	 * Called when the tool is concealed. It is common for the tool to unregister
 	 * actions and menu bar items and tool bar items that were registered in the
@@ -236,6 +245,12 @@ public class MazeTool extends ProgramTool {
 
 		pullAction( "reset", resetAction );
 		pullAction( "runpause", runAction );
+	}
+
+	@Override
+	protected void deallocate() throws ToolException {
+		Maze maze = getAsset().getModel();
+		maze.unregister( NodeEvent.NODE_CHANGED, modelChangeHandler );
 	}
 
 	private Maze getMaze() {
