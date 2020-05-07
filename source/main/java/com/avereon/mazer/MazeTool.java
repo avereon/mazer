@@ -173,7 +173,7 @@ public class MazeTool extends ProgramTool {
 	 */
 	@Override
 	protected void assetReady( OpenAssetRequest request ) {
-		assetRefreshed();
+		refresh();
 	}
 
 	/**
