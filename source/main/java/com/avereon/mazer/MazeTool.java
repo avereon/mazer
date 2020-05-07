@@ -170,6 +170,10 @@ public class MazeTool extends ProgramTool {
 	 */
 	@Override
 	protected void assetReady( OpenAssetRequest request ) {
+		modelChangeHandler = e -> refresh();
+		Maze maze = getAsset().getModel();
+		maze.register( NodeEvent.NODE_CHANGED, modelChangeHandler );
+
 		refresh();
 	}
 
@@ -225,11 +229,7 @@ public class MazeTool extends ProgramTool {
 	}
 
 	@Override
-	protected void allocate() throws ToolException {
-		modelChangeHandler = e -> refresh();
-		Maze maze = getAsset().getModel();
-		maze.register( NodeEvent.NODE_CHANGED, modelChangeHandler );
-	}
+	protected void allocate() throws ToolException {}
 
 	/**
 	 * Called when the tool is concealed. It is common for the tool to unregister
