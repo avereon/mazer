@@ -169,7 +169,7 @@ public class MazeTool extends ProgramTool {
 	 * asset was requested to be opened.
 	 */
 	@Override
-	protected void assetReady( OpenAssetRequest request ) {
+	protected void open( OpenAssetRequest request ) {
 		modelChangeHandler = e -> refresh();
 		Maze maze = getAsset().getModel();
 		maze.register( NodeEvent.NODE_CHANGED, modelChangeHandler );
