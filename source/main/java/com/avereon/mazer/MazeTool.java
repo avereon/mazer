@@ -7,14 +7,16 @@ import com.avereon.venza.javafx.FxUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.workpane.ToolException;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -134,6 +136,8 @@ public class MazeTool extends ProgramTool {
 				setZoom( getZoom() + increment );
 			} );
 		} );
+
+		modelChangeHandler = e -> refresh();
 	}
 
 	public int getZoom() {
@@ -169,11 +173,14 @@ public class MazeTool extends ProgramTool {
 	 * asset was requested to be opened.
 	 */
 	@Override
-	protected void open( OpenAssetRequest request ) {
-		modelChangeHandler = e -> refresh();
-		Maze maze = getAsset().getModel();
-		maze.register( NodeEvent.NODE_CHANGED, modelChangeHandler );
+	protected void ready( OpenAssetRequest request ) {
+		((Maze)getAsset().getModel()).register( NodeEvent.NODE_CHANGED, modelChangeHandler );
 
+		refresh();
+	}
+
+	@Override
+	protected void open( OpenAssetRequest request ) {
 		refresh();
 	}
 
@@ -217,29 +224,22 @@ public class MazeTool extends ProgramTool {
 	 * Called when the tool is activated. It is common for the tool to register
 	 * actions, menu bar items and tool bar items in this method. Any action, menu
 	 * bar item or tool bar item should be removed in the {@link #conceal} method.
-	 *
-	 * @throws ToolException
 	 */
 	@Override
-	protected void activate() throws ToolException {
+	protected void activate() {
 		pushAction( "reset", resetAction );
 		pushAction( "runpause", runAction );
 
 		pushToolActions( "reset", "runpause" );
 	}
 
-	@Override
-	protected void allocate() throws ToolException {}
-
 	/**
 	 * Called when the tool is concealed. It is common for the tool to unregister
 	 * actions and menu bar items and tool bar items that were registered in the
 	 * {@link #activate} method in this method.
-	 *
-	 * @throws ToolException
 	 */
 	@Override
-	protected void conceal() throws ToolException {
+	protected void conceal() {
 		pullToolActions();
 
 		pullAction( "reset", resetAction );
@@ -247,9 +247,8 @@ public class MazeTool extends ProgramTool {
 	}
 
 	@Override
-	protected void deallocate() throws ToolException {
-		Maze maze = getAsset().getModel();
-		maze.unregister( NodeEvent.NODE_CHANGED, modelChangeHandler );
+	protected void deallocate() {
+		((Maze)getAsset().getModel()).unregister( NodeEvent.NODE_CHANGED, modelChangeHandler );
 	}
 
 	private Maze getMaze() {
