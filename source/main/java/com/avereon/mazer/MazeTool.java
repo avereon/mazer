@@ -2,15 +2,20 @@ package com.avereon.mazer;
 
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
+import com.avereon.skill.RunPauseResettable;
 import com.avereon.util.Log;
 import com.avereon.venza.javafx.FxUtil;
-import com.avereon.xenon.*;
+import com.avereon.xenon.BundleKey;
+import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.ProgramTool;
+import com.avereon.xenon.UiFactory;
+import com.avereon.xenon.action.common.ResetAction;
+import com.avereon.xenon.action.common.RunPauseAction;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
@@ -33,7 +38,7 @@ import java.util.Map;
  * demonstrates various capabilities and practices common to Xenon tools.
  * </p>
  */
-public class MazeTool extends ProgramTool {
+public class MazeTool extends ProgramTool implements RunPauseResettable {
 
 	private static final Logger log = Log.get();
 
@@ -63,7 +68,7 @@ public class MazeTool extends ProgramTool {
 
 	private MazeSolver solver;
 
-	private EventHandler<NodeEvent> modelChangeHandler;
+	private final EventHandler<NodeEvent> modelChangeHandler;
 
 	static {
 		backgrounds = new HashMap<>();
@@ -96,8 +101,8 @@ public class MazeTool extends ProgramTool {
 		 */
 		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
 
-		resetAction = new ResetAction( product.getProgram() );
-		runAction = new RunPauseAction( product.getProgram() );
+		resetAction = new com.avereon.xenon.action.common.ResetAction( product.getProgram(), this );
+		runAction = new com.avereon.xenon.action.common.RunPauseAction( product.getProgram(),this );
 
 		mazeWidth = new TextField( String.valueOf( Maze.DEFAULT_WIDTH ) );
 		mazeWidth.setOnAction( e -> getMaze().setSize( Integer.parseInt( mazeWidth.getText() ), getMaze().getHeight() ) );
@@ -174,14 +179,52 @@ public class MazeTool extends ProgramTool {
 	 */
 	@Override
 	protected void ready( OpenAssetRequest request ) {
-		((Maze)getAsset().getModel()).register( NodeEvent.NODE_CHANGED, modelChangeHandler );
-
-		refresh();
+		getMaze().register( NodeEvent.NODE_CHANGED, modelChangeHandler );
 	}
 
 	@Override
 	protected void open( OpenAssetRequest request ) {
 		refresh();
+	}
+
+	/**
+	 * Called when the tool is activated. It is common for the tool to register
+	 * actions, menu bar items and tool bar items in this method. Any action, menu
+	 * bar item or tool bar item should be removed in the {@link #conceal} method.
+	 */
+	@Override
+	protected void activate() {
+		pushAction( "reset", resetAction );
+		pushAction( "runpause", runAction );
+		pushToolActions( "reset", "runpause" );
+
+		if( getAsset().isLoaded() ) {
+			runAction.setState( getSolver().isRunning() ? "pause" : "run" );
+		}
+	}
+
+	/**
+	 * Called when the tool is concealed. It is common for the tool to unregister
+	 * actions and menu bar items and tool bar items that were registered in the
+	 * {@link #activate} method in this method.
+	 */
+	@Override
+	protected void conceal() {
+		pullToolActions();
+		pullAction( "reset", resetAction );
+		pullAction( "runpause", runAction );
+	}
+
+	@Override
+	protected void deallocate() {
+		getMaze().unregister( NodeEvent.NODE_CHANGED, modelChangeHandler );
+
+		MazeSolver solver = getSolver();
+		if( solver != null ) solver.stop();
+	}
+
+	private Maze getMaze() {
+		return (Maze)getAsset().getModel();
 	}
 
 	/**
@@ -220,41 +263,6 @@ public class MazeTool extends ProgramTool {
 		} );
 	}
 
-	/**
-	 * Called when the tool is activated. It is common for the tool to register
-	 * actions, menu bar items and tool bar items in this method. Any action, menu
-	 * bar item or tool bar item should be removed in the {@link #conceal} method.
-	 */
-	@Override
-	protected void activate() {
-		pushAction( "reset", resetAction );
-		pushAction( "runpause", runAction );
-
-		pushToolActions( "reset", "runpause" );
-	}
-
-	/**
-	 * Called when the tool is concealed. It is common for the tool to unregister
-	 * actions and menu bar items and tool bar items that were registered in the
-	 * {@link #activate} method in this method.
-	 */
-	@Override
-	protected void conceal() {
-		pullToolActions();
-
-		pullAction( "reset", resetAction );
-		pullAction( "runpause", runAction );
-	}
-
-	@Override
-	protected void deallocate() {
-		((Maze)getAsset().getModel()).unregister( NodeEvent.NODE_CHANGED, modelChangeHandler );
-	}
-
-	private Maze getMaze() {
-		return (Maze)getAsset().getModel();
-	}
-
 	private void rebuildGrid() {
 		grid.getChildren().clear();
 
@@ -269,66 +277,99 @@ public class MazeTool extends ProgramTool {
 		}
 	}
 
-	private class ResetAction extends Action {
-
-		protected ResetAction( Program program ) {
-			super( program );
-		}
-
-		@Override
-		public boolean isEnabled() {
-			return true;
-		}
-
-		@Override
-		public void handle( ActionEvent actionEvent ) {
-			MazeSolver solver = getSolver();
-			if( solver != null ) solver.stop();
-			getMaze().reset();
-		}
-
+	@Override
+	public void pause() {
+		MazeSolver solver = getSolver();
+		if( solver != null ) solver.stop();
 	}
 
-	private class RunPauseAction extends Action {
+	@Override
+	public void reset() {
+		pause();
+		getMaze().reset();
+	}
 
-		protected RunPauseAction( Program program ) {
-			super( program );
-		}
-
-		@Override
-		public boolean isEnabled() {
-			return true;
-		}
-
-		@Override
-		public void handle( ActionEvent event ) {
-			if( getMaze().isGridClear() ) getMaze().reset();
-
-			MazeSolver solver = getSolver();
-			if( solver != null && solver.isRunning() ) {
-				solver.stop();
-			} else {
-				switch( chooser.getSelectionModel().getSelectedIndex() ) {
-					case 1: {
-						solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
-						break;
-					}
-					case 2: {
-						solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
-						break;
-					}
-					default: {
-						solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
-						break;
-					}
-				}
-				setSolver( solver.setMaze( getMaze() ) );
-
-				getProgram().getTaskManager().submit( solver );
+	@Override
+	public void run() {
+		switch( chooser.getSelectionModel().getSelectedIndex() ) {
+			case 1: {
+				solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
+				break;
+			}
+			case 2: {
+				solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
+				break;
+			}
+			default: {
+				solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
+				break;
 			}
 		}
+		setSolver( solver.setMaze( getMaze() ) );
 
+		getProgram().getTaskManager().submit( solver );
 	}
+
+//	private class ResetAction extends Action {
+//
+//		protected ResetAction( Program program ) {
+//			super( program );
+//		}
+//
+//		@Override
+//		public boolean isEnabled() {
+//			return true;
+//		}
+//
+//		@Override
+//		public void handle( ActionEvent actionEvent ) {
+//			MazeSolver solver = getSolver();
+//			if( solver != null ) solver.stop();
+//			getMaze().reset();
+//		}
+//
+//	}
+//
+//	private class RunPauseAction extends Action {
+//
+//		protected RunPauseAction( Program program ) {
+//			super( program );
+//		}
+//
+//		@Override
+//		public boolean isEnabled() {
+//			return true;
+//		}
+//
+//		@Override
+//		public void handle( ActionEvent event ) {
+//			if( getMaze().isGridClear() ) getMaze().reset();
+//
+//			MazeSolver solver = getSolver();
+//			if( solver != null && solver.isRunning() ) {
+//				solver.stop();
+//			} else {
+//				switch( chooser.getSelectionModel().getSelectedIndex() ) {
+//					case 1: {
+//						solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
+//						break;
+//					}
+//					case 2: {
+//						solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
+//						break;
+//					}
+//					default: {
+//						solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
+//						break;
+//					}
+//				}
+//				setSolver( solver.setMaze( getMaze() ) );
+//
+//				getProgram().getTaskManager().submit( solver );
+//			}
+//		}
+//
+//	}
 
 	private static Background createBackground( String color ) {
 		return createBackground( Color.web( color ) );
