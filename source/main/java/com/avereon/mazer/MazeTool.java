@@ -94,13 +94,6 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 		super( product, asset );
 		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
 
-		/**
-		 // It is common to use an icon from the icon library as the tool icon. The
-		 // icon to be used must be registered in the icon library to be available.
-		 // {@link com.avereon.mazer.Mazer}
-		 */
-		setGraphic( product.getProgram().getIconLibrary().getIcon( "mazer" ) );
-
 		resetAction = new com.avereon.xenon.action.common.ResetAction( product.getProgram(), this );
 		runAction = new com.avereon.xenon.action.common.RunPauseAction( product.getProgram(),this );
 
@@ -179,6 +172,9 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	 */
 	@Override
 	protected void ready( OpenAssetRequest request ) {
+		setTitle( getAsset().getName() );
+		setGraphic( getProgram().getIconLibrary().getIcon( "mazer" ) );
+
 		getMaze().register( NodeEvent.NODE_CHANGED, modelChangeHandler );
 	}
 
