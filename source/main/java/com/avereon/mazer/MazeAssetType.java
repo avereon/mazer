@@ -8,8 +8,6 @@ import com.avereon.xenon.asset.AssetType;
 
 public class MazeAssetType extends AssetType {
 
-	private static final String MEDIA_TYPE = "application/vnd.avereon.mazer.maze";
-
 	public MazeAssetType( ProgramProduct product ) {
 		super( product, "mazer" );
 		setDefaultCodec( new MazeCodec( product ) );
@@ -17,7 +15,7 @@ public class MazeAssetType extends AssetType {
 
 	@Override
 	public String getKey() {
-		return MEDIA_TYPE;
+		return getDefaultCodec().getKey();
 	}
 
 	@Override

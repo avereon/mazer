@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 
 public class MazeCodec extends Codec {
 
+	static final String MEDIA_TYPE = "application/vnd.avereon.mazer.maze";
+
 	private static final Logger log = Log.get();
 
 	private Product product;
@@ -18,11 +20,12 @@ public class MazeCodec extends Codec {
 	public MazeCodec( Product product ) {
 		this.product = product;
 		setDefaultExtension( "maze" );
+		addSupported( Pattern.MEDIATYPE, MEDIA_TYPE );
 	}
 
 	@Override
 	public String getKey() {
-		return "com.avereon.mazer.codec.maze";
+		return MEDIA_TYPE;
 	}
 
 	@Override
