@@ -34,7 +34,7 @@ public class Mazer extends Mod {
 	 */
 	@Override
 	public void startup() {
-		registerIcon( "mazer", MazerIcon.class );
+		registerIcon( "mazer", new MazerIcon() );
 
 		registerAction( this.rb(), "reset" );
 		registerAction( this.rb(), "runpause" );
@@ -56,7 +56,7 @@ public class Mazer extends Mod {
 		unregisterAction( "runpause" );
 		unregisterAction( "reset" );
 
-		unregisterIcon( "mazer", MazerIcon.class );
+		unregisterIcon( "mazer", new MazerIcon() );
 	}
 
 	/**
