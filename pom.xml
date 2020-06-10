@@ -78,6 +78,7 @@
 										<image>
 											<class>com.avereon.mazer.MazerIcon</class>
 											<target>${images-folder}/product.png</target>
+											<theme>light</theme>
 										</image>
 									</images>
 								</configuration>
