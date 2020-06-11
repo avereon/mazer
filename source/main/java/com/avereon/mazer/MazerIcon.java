@@ -1,6 +1,6 @@
 package com.avereon.mazer;
 
-import com.avereon.venza.icon.RenderedIcon;
+import com.avereon.venza.image.RenderedIcon;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 
