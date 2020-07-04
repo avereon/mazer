@@ -50,7 +50,6 @@
 				<configuration>
 					<argLine>
 						--add-opens=com.avereon.mazer/com.avereon.mazer=ALL-UNNAMED
-						--add-opens=com.avereon.mazer/com.avereon.mazer.asset=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
