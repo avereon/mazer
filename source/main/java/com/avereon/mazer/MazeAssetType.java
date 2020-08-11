@@ -19,14 +19,14 @@ public class MazeAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetInit( Program program, Asset asset ) throws AssetException {
+	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
 		asset.setModel( new Maze() );
 		return true;
 	}
 
 	@Override
-	public boolean assetUser( Program program, Asset asset ) throws AssetException {
-		return super.assetUser( program, asset );
+	public boolean assetNew( Program program, Asset asset ) throws AssetException {
+		return super.assetNew( program, asset );
 	}
 
 }
