@@ -127,7 +127,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 
 		addEventFilter( ScrollEvent.SCROLL, e -> {
 			if( e.getDeltaY() == 0 ) return;
-			Platform.runLater( () -> {
+			Fx.run( () -> {
 				int increment = 0;
 				if( e.getDeltaY() < 0 ) increment = -1;
 				if( e.getDeltaY() > 0 ) increment = 1;
@@ -234,7 +234,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 		int width = maze.getWidth();
 		int height = maze.getHeight();
 
-		Platform.runLater( () -> {
+		Fx.run( () -> {
 			this.mazeWidth.setText( String.valueOf( width ) );
 			this.mazeHeight.setText( String.valueOf( height ) );
 

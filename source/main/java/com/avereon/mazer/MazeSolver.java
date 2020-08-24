@@ -61,7 +61,7 @@ public abstract class MazeSolver extends ProgramTask<Void> {
 			execute();
 		} finally {
 			running = false;
-			Platform.runLater( () -> getProgram().getActionLibrary().getAction( "runpause" ).setState( "run" ) );
+			Fx.run( () -> getProgram().getActionLibrary().getAction( "runpause" ).setState( "run" ) );
 			synchronized( stoplock ) {
 				stoplock.notifyAll();
 			}
