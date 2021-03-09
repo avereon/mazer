@@ -1,5 +1,6 @@
 package com.avereon.mazer;
 
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
@@ -15,9 +16,10 @@ public class Mazer extends Mod {
 
 	private static final Logger log = Log.get();
 
-	private MazeAssetType mazeAssetType;
+	private final MazeAssetType mazeAssetType;
 
 	public Mazer() {
+		Rb.init( this );
 		mazeAssetType = new MazeAssetType( this );
 	}
 
@@ -28,25 +30,21 @@ public class Mazer extends Mod {
 	public void register() {}
 
 	/**
-	 * Called when the mod is started. It is common to register custom icons,
-	 * actions, asset types, tools and long running items like timers,
-	 * tasks and other threads in this method.
+	 * Called when the mod is started. It is common to register custom icons, actions, asset types, tools and long running items like timers, tasks and other threads in this method.
 	 */
 	@Override
 	public void startup() {
 		registerIcon( "mazer", new MazerIcon() );
 
-		registerAction( this.rb(), "reset" );
-		registerAction( this.rb(), "runpause" );
+		registerAction( this, "reset" );
+		registerAction( this, "runpause" );
 
 		registerAssetType( mazeAssetType );
 		registerTool( mazeAssetType, new ToolRegistration( this, MazeTool.class ) );
 	}
 
 	/**
-	 * Called when the mod should shut down. It is common to unregister custom
-	 * icons, actions, asset types, tools and long running items like timers,
-	 * tasks and other threads in this method.
+	 * Called when the mod should shut down. It is common to unregister custom icons, actions, asset types, tools and long running items like timers, tasks and other threads in this method.
 	 */
 	@Override
 	public void shutdown() {
