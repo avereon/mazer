@@ -96,7 +96,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
 
 		resetAction = new com.avereon.xenon.action.common.ResetAction( product.getProgram(), this );
-		runAction = new com.avereon.xenon.action.common.RunPauseAction( product.getProgram(),this );
+		runAction = new com.avereon.xenon.action.common.RunPauseAction( product.getProgram(), this );
 
 		mazeWidth = new TextField( String.valueOf( Maze.DEFAULT_WIDTH ) );
 		mazeWidth.setOnAction( e -> getMaze().setSize( Integer.parseInt( mazeWidth.getText() ), getMaze().getHeight() ) );
@@ -193,11 +193,8 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	protected void activate() {
 		pushAction( "reset", resetAction );
 		pushAction( "runpause", runAction );
-		pushToolActions( "reset", "runpause" );
-
-		if( getAsset().isLoaded() ) {
-			runAction.setState( getSolver().isRunning() ? "pause" : "run" );
-		}
+		pushTools( "reset runpause" );
+		if( getAsset().isLoaded() ) runAction.setState( getSolver().isRunning() ? "pause" : "run" );
 	}
 
 	/**
@@ -207,7 +204,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	 */
 	@Override
 	protected void conceal() {
-		pullToolActions();
+		pullTools();
 		pullAction( "reset", resetAction );
 		pullAction( "runpause", runAction );
 	}
@@ -307,66 +304,66 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 		getProgram().getTaskManager().submit( solver );
 	}
 
-//	private class ResetAction extends Action {
-//
-//		protected ResetAction( Program program ) {
-//			super( program );
-//		}
-//
-//		@Override
-//		public boolean isEnabled() {
-//			return true;
-//		}
-//
-//		@Override
-//		public void handle( ActionEvent actionEvent ) {
-//			MazeSolver solver = getSolver();
-//			if( solver != null ) solver.stop();
-//			getMaze().reset();
-//		}
-//
-//	}
-//
-//	private class RunPauseAction extends Action {
-//
-//		protected RunPauseAction( Program program ) {
-//			super( program );
-//		}
-//
-//		@Override
-//		public boolean isEnabled() {
-//			return true;
-//		}
-//
-//		@Override
-//		public void handle( ActionEvent event ) {
-//			if( getMaze().isGridClear() ) getMaze().reset();
-//
-//			MazeSolver solver = getSolver();
-//			if( solver != null && solver.isRunning() ) {
-//				solver.stop();
-//			} else {
-//				switch( chooser.getSelectionModel().getSelectedIndex() ) {
-//					case 1: {
-//						solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
-//						break;
-//					}
-//					case 2: {
-//						solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
-//						break;
-//					}
-//					default: {
-//						solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
-//						break;
-//					}
-//				}
-//				setSolver( solver.setMaze( getMaze() ) );
-//
-//				getProgram().getTaskManager().submit( solver );
-//			}
-//		}
-//
-//	}
+	//	private class ResetAction extends Action {
+	//
+	//		protected ResetAction( Program program ) {
+	//			super( program );
+	//		}
+	//
+	//		@Override
+	//		public boolean isEnabled() {
+	//			return true;
+	//		}
+	//
+	//		@Override
+	//		public void handle( ActionEvent actionEvent ) {
+	//			MazeSolver solver = getSolver();
+	//			if( solver != null ) solver.stop();
+	//			getMaze().reset();
+	//		}
+	//
+	//	}
+	//
+	//	private class RunPauseAction extends Action {
+	//
+	//		protected RunPauseAction( Program program ) {
+	//			super( program );
+	//		}
+	//
+	//		@Override
+	//		public boolean isEnabled() {
+	//			return true;
+	//		}
+	//
+	//		@Override
+	//		public void handle( ActionEvent event ) {
+	//			if( getMaze().isGridClear() ) getMaze().reset();
+	//
+	//			MazeSolver solver = getSolver();
+	//			if( solver != null && solver.isRunning() ) {
+	//				solver.stop();
+	//			} else {
+	//				switch( chooser.getSelectionModel().getSelectedIndex() ) {
+	//					case 1: {
+	//						solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
+	//						break;
+	//					}
+	//					case 2: {
+	//						solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
+	//						break;
+	//					}
+	//					default: {
+	//						solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
+	//						break;
+	//					}
+	//				}
+	//				setSolver( solver.setMaze( getMaze() ) );
+	//
+	//				getProgram().getTaskManager().submit( solver );
+	//			}
+	//		}
+	//
+	//	}
 
 	private static Background createBackground( String color ) {
 		return createBackground( Color.web( color ) );
