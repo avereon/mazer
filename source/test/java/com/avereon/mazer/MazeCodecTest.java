@@ -26,7 +26,7 @@ public class MazeCodecTest extends BaseMazerTest {
 	void setup() {
 		Path path = Paths.get( "target", "maze.txt" );
 		assetType = new MazeAssetType( mazer );
-		asset = new Asset( path.toUri(), assetType );
+		asset = new Asset( assetType, path.toUri() );
 		maze = new Maze();
 	}
 
