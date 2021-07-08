@@ -2,27 +2,25 @@ package com.avereon.mazer;
 
 import com.avereon.product.Product;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.Program;
+import lombok.CustomLog;
 
-import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@CustomLog
 public class SandbarSolver extends MazeSolver {
 
-	private static final Logger log = Log.get();
+	private final Random random = new Random();
 
 	private int[][] map;
 
 	private int width;
 
 	private int height;
-
-	private Random random = new Random();
 
 	public SandbarSolver( Program program, Product product, MazeTool tool ) {
 		super( program, product, tool );
@@ -56,7 +54,7 @@ public class SandbarSolver extends MazeSolver {
 				try {
 					getMaze().move();
 				} catch( MoveException exception ) {
-					log.log( Log.ERROR, exception );
+					log.atError( exception ).log();
 					return;
 				}
 

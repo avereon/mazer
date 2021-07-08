@@ -1,12 +1,10 @@
 package com.avereon.mazer;
 
-import com.avereon.util.Log;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnEvent;
 import com.avereon.transaction.TxnException;
-
-import java.lang.System.Logger;
+import lombok.CustomLog;
 
 /**
  * The Maze class is the data model used for the Maze asset type, asset and
@@ -16,9 +14,8 @@ import java.lang.System.Logger;
  * asset data model is also a Node then the modified flag is automatically
  * managed by the Node logic.
  */
+@CustomLog
 public class Maze extends Node {
-
-	private static final Logger log = Log.get();
 
 	private static final int UNVISITED = 0;
 
@@ -82,7 +79,7 @@ public class Maze extends Node {
 			}
 			Txn.commit();
 		} catch( Exception exception ) {
-			log.log( Log.WARN, "Error changing maze size", exception );
+			log.atWarn().withCause( exception ).log( "Error changing maze size" );
 		}
 	}
 
@@ -106,7 +103,7 @@ public class Maze extends Node {
 			setValue( COOKIE_Y, y );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error setting cookie location", exception );
+			log.atError().withCause( exception ).log( "Error setting cookie location" );
 		}
 	}
 

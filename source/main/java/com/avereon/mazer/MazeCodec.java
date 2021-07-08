@@ -2,19 +2,17 @@ package com.avereon.mazer;
 
 import com.avereon.product.Product;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
+import lombok.CustomLog;
 
 import java.io.*;
-import java.lang.System.Logger;
 import java.nio.charset.StandardCharsets;
 
+@CustomLog
 public class MazeCodec extends Codec {
 
 	static final String MEDIA_TYPE = "application/vnd.avereon.mazer.maze";
-
-	private static final Logger log = Log.get();
 
 	private Product product;
 
@@ -46,7 +44,7 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void load( Asset asset, InputStream input ) throws IOException {
-		log.log( Log.DEBUG, "Loading maze: " + asset );
+		log.atDebug().log( "Loading maze: %s", asset );
 
 		BufferedReader reader = new BufferedReader( new InputStreamReader( input, StandardCharsets.UTF_8 ) );
 
@@ -61,26 +59,11 @@ public class MazeCodec extends Codec {
 					data[ index ] = data[ index ].trim();
 				}
 				switch( type ) {
-					case 'S': {
-						maze.setSize( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ) );
-						break;
-					}
-					case 'H': {
-						maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.HOLE );
-						break;
-					}
-					case 'C': {
-						maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.COOKIE );
-						break;
-					}
-					case 'M': {
-						maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.MONSTER );
-						break;
-					}
-					case 'D': {
-						maze.setStartDirection( Direction.valueOf( data[ 0 ] ) );
-						break;
-					}
+					case 'S' -> maze.setSize( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ) );
+					case 'H' -> maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.HOLE );
+					case 'C' -> maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.COOKIE );
+					case 'M' -> maze.setCellConfig( Integer.parseInt( data[ 0 ] ), Integer.parseInt( data[ 1 ] ), MazeConfig.MONSTER );
+					case 'D' -> maze.setStartDirection( Direction.valueOf( data[ 0 ] ) );
 				}
 			}
 
@@ -93,7 +76,7 @@ public class MazeCodec extends Codec {
 
 	@Override
 	public void save( Asset asset, OutputStream output ) throws IOException {
-		log.log( Log.DEBUG, "Saving maze: " + asset );
+		log.atDebug().log( "Saving maze: %s", asset );
 		try {
 			Maze maze = asset.getModel();
 			int width = maze.getWidth();
@@ -107,14 +90,8 @@ public class MazeCodec extends Codec {
 					int state = maze.getCellConfig( x, y );
 					if( state != MazeConfig.STEP ) {
 						switch( state ) {
-							case MazeConfig.HOLE: {
-								printer.println( "H " + x + "," + y );
-								break;
-							}
-							case MazeConfig.MONSTER: {
-								printer.println( "M " + x + "," + y );
-								break;
-							}
+							case MazeConfig.HOLE -> printer.println( "H " + x + "," + y );
+							case MazeConfig.MONSTER -> printer.println( "M " + x + "," + y );
 						}
 					}
 				}

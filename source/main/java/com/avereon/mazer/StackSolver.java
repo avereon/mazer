@@ -2,20 +2,18 @@ package com.avereon.mazer;
 
 import com.avereon.product.Product;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.Program;
+import lombok.CustomLog;
 
-import java.lang.System.Logger;
 import java.util.Deque;
 import java.util.concurrent.LinkedBlockingDeque;
 
+@CustomLog
 public class StackSolver extends MazeSolver {
 
-	private static final Logger log = Log.get();
-
-	private Deque<State> stack = new LinkedBlockingDeque<>();
+	private final Deque<State> stack = new LinkedBlockingDeque<>();
 
 	public StackSolver( Program program, Product product, MazeTool tool ) {
 		super( program, product, tool );
@@ -50,7 +48,7 @@ public class StackSolver extends MazeSolver {
 			stack.push( new State( getMaze() ) );
 			getMaze().move();
 		} catch( MoveException exception ) {
-			log.log( Log.ERROR, exception );
+			log.atError( exception ).log();
 		}
 	}
 

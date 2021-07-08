@@ -2,19 +2,17 @@ package com.avereon.mazer;
 
 import com.avereon.product.Product;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.Program;
+import lombok.CustomLog;
 
-import java.lang.System.Logger;
 import java.util.Random;
 
+@CustomLog
 public class WanderingSolver extends MazeSolver {
 
-	private static final Logger log = Log.get();
-
-	private Random random = new Random();
+	private final Random random = new Random();
 
 	public WanderingSolver( Program program, Product product, MazeTool editor ) {
 		super( program, product, editor );
@@ -30,28 +28,19 @@ public class WanderingSolver extends MazeSolver {
 		getMaze().setColorScale( 2 );
 		while( execute && !getMaze().isGridClear() ) {
 			switch( random.nextInt( 4 ) ) {
-				case 0: {
-					getMaze().turnLeft();
-					break;
-				}
-				case 1: {
-					getMaze().turnRight();
-					break;
-				}
-				case 2: {
-					break;
-				}
-				case 3: {
+				case 0 -> getMaze().turnLeft();
+				case 1 -> getMaze().turnRight();
+				case 2 -> {}
+				case 3 -> {
 					getMaze().turnRight();
 					getMaze().turnRight();
-					break;
 				}
 			}
 			if( getMaze().isFrontClear() ) {
 				try {
 					getMaze().move();
 				} catch( MoveException exception ) {
-					log.log( Log.ERROR, exception );
+					log.atError( exception ).log();
 					return;
 				}
 			}

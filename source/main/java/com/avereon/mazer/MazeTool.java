@@ -4,7 +4,6 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
 import com.avereon.skill.RunPauseResettable;
-import com.avereon.util.Log;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
@@ -26,8 +25,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import lombok.CustomLog;
 
-import java.lang.System.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,35 +38,34 @@ import java.util.Map;
  * demonstrates various capabilities and practices common to Xenon tools.
  * </p>
  */
+@CustomLog
 public class MazeTool extends ProgramTool implements RunPauseResettable {
-
-	private static final Logger log = Log.get();
 
 	private static final int DEFAULT_ZOOM = 20;
 
-	private static Map<Integer, Background> backgrounds;
+	private static final Map<Integer, Background> backgrounds;
 
-	private ResetAction resetAction;
+	private final ResetAction resetAction;
 
-	private RunPauseAction runAction;
+	private final RunPauseAction runAction;
 
-	private TextField mazeWidth;
+	private final TextField mazeWidth;
 
-	private TextField mazeHeight;
+	private final TextField mazeHeight;
 
-	private ComboBox<String> chooser;
+	private final ComboBox<String> chooser;
 
-	private Spinner<Integer> solverSpeed;
+	private final Spinner<Integer> solverSpeed;
 
-	private Label steps;
+	private final Label steps;
 
-	private GridPane grid;
+	private final GridPane grid;
 
-	private Cell[][] cells;
-
-	private IntegerProperty zoom;
+	private final IntegerProperty zoom;
 
 	private MazeSolver solver;
+
+	private Cell[][] cells;
 
 	private final EventHandler<NodeEvent> modelChangeHandler;
 
@@ -286,18 +284,9 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	@Override
 	public void run() {
 		switch( chooser.getSelectionModel().getSelectedIndex() ) {
-			case 1: {
-				solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
-				break;
-			}
-			case 2: {
-				solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
-				break;
-			}
-			default: {
-				solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
-				break;
-			}
+			case 1 -> solver = new SandbarSolver( getProgram(), getProduct(), MazeTool.this );
+			case 2 -> solver = new WanderingSolver( getProgram(), getProduct(), MazeTool.this );
+			default -> solver = new StackSolver( getProgram(), getProduct(), MazeTool.this );
 		}
 		setSolver( solver.setMaze( getMaze() ) );
 
@@ -375,13 +364,13 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 
 	private static class Cell extends Region {
 
-		private int x;
+		private final int x;
 
-		private int y;
+		private final int y;
 
 		private int visits;
 
-		private Background visited = createBackground( "#80000040" );
+		private final Background visited = createBackground( "#80000040" );
 
 		public Cell( Maze maze, int x, int y ) {
 			this.x = x;

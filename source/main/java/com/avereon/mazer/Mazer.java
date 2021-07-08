@@ -1,20 +1,17 @@
 package com.avereon.mazer;
 
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
-
-import java.lang.System.Logger;
+import lombok.CustomLog;
 
 /**
  * The Mazer mod. This mod is part of an example mod for
  * <a href="https://www.avereon.com/product/xenon">Xenon</a>. The mod
  * demonstrates various capabilities and practices common to Xenon mods.
  */
+@CustomLog
 public class Mazer extends Mod {
-
-	private static final Logger log = Log.get();
 
 	private final MazeAssetType mazeAssetType;
 

@@ -1,5 +1,9 @@
 module com.avereon.mazer {
 
+	// Compile-time only
+	requires static lombok;
+
+	// Both compile-time and run-time
 	requires com.avereon.xenon;
 	requires com.avereon.zenna;
 	requires com.avereon.zerra;
