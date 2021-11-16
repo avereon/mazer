@@ -3,7 +3,7 @@ package com.avereon.mazer;
 import com.avereon.product.Product;
 import com.avereon.product.Rb;
 import com.avereon.util.ThreadUtil;
-import com.avereon.xenon.BundleKey;
+import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Program;
 import lombok.CustomLog;
 
@@ -20,7 +20,7 @@ public class WanderingSolver extends MazeSolver {
 
 	@Override
 	public String toString() {
-		return Rb.text( BundleKey.LABEL, "solver.random" );
+		return Rb.text( RbKey.LABEL, "solver.random" );
 	}
 
 	@Override

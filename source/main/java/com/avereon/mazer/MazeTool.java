@@ -4,7 +4,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
 import com.avereon.skill.RunPauseResettable;
-import com.avereon.xenon.BundleKey;
+import com.avereon.xenon.RbKey;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.UiFactory;
@@ -102,9 +102,9 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 		mazeHeight.setOnAction( e -> getMaze().setSize( getMaze().getWidth(), Integer.parseInt( mazeHeight.getText() ) ) );
 
 		chooser = new ComboBox<>();
-		chooser.getItems().add( Rb.text( BundleKey.LABEL, "solver.stack" ) );
-		chooser.getItems().add( Rb.text( BundleKey.LABEL, "solver.sandbar" ) );
-		chooser.getItems().add( Rb.text( BundleKey.LABEL, "solver.random" ) );
+		chooser.getItems().add( Rb.text( RbKey.LABEL, "solver.stack" ) );
+		chooser.getItems().add( Rb.text( RbKey.LABEL, "solver.sandbar" ) );
+		chooser.getItems().add( Rb.text( RbKey.LABEL, "solver.random" ) );
 		chooser.getSelectionModel().select( 0 );
 
 		solverSpeed = new Spinner<>( 10, 100, 10 );
@@ -113,7 +113,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 		grid = new GridPane();
 		grid.setAlignment( Pos.CENTER );
 
-		steps = new Label( Rb.text( BundleKey.PROMPT, "steps" ) + 0 );
+		steps = new Label( Rb.text( RbKey.PROMPT, "steps" ) + 0 );
 
 		HBox hbox = new HBox( new Label( "Width: " ), mazeWidth, new Label( "Height: " ), mazeHeight, new Label( "Speed:" ), solverSpeed, chooser );
 		hbox.setAlignment( Pos.BASELINE_LEFT );
@@ -251,7 +251,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 
 			cells[ maze.getX() ][ maze.getY() ].setConfig( MazeConfig.COOKIE );
 
-			steps.setText( Rb.text( BundleKey.PROMPT, "steps" ) + maze.getStepCount() );
+			steps.setText( Rb.text( RbKey.PROMPT, "steps" ) + maze.getStepCount() );
 		} );
 	}
 
