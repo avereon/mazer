@@ -9,10 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 
 public class MazeCodecTest extends BaseMazerTest {
 
@@ -44,12 +42,12 @@ public class MazeCodecTest extends BaseMazerTest {
 		String content = new String( output.toByteArray(), StandardCharsets.UTF_8 );
 
 		BufferedReader reader = new BufferedReader( new StringReader( content ) );
-		assertThat( reader.readLine(), is( "S 3,3" ) );
-		assertThat( reader.readLine(), is( "H 1,1" ) );
-		assertThat( reader.readLine(), is( "M 2,1" ) );
-		assertThat( reader.readLine(), is( "C 0,2" ) );
-		assertThat( reader.readLine(), is( "D NORTH" ) );
-		assertThat( reader.readLine(), is( nullValue() ) );
+		assertThat( reader.readLine() ).isEqualTo( "S 3,3" );
+		assertThat( reader.readLine() ).isEqualTo( "H 1,1" );
+		assertThat( reader.readLine() ).isEqualTo( "M 2,1" );
+		assertThat( reader.readLine() ).isEqualTo( "C 0,2" );
+		assertThat( reader.readLine() ).isEqualTo( "D NORTH" );
+		assertThat( reader.readLine() ).isNull();
 	}
 
 	@Test
@@ -68,33 +66,34 @@ public class MazeCodecTest extends BaseMazerTest {
 		maze = asset.getModel();
 
 		// Check the maze configuration
-		assertThat( maze.getWidth(), is( 3 ) );
-		assertThat( maze.getHeight(), is( 3 ) );
-		assertThat( maze.getCellConfig( 0, 0 ), is( MazeConfig.STEP ) );
-		assertThat( maze.getCellConfig( 0, 1 ), is( MazeConfig.STEP ) );
-		assertThat( maze.getCellConfig( 0, 2 ), is( MazeConfig.STEP ) );
-		assertThat( maze.getCellConfig( 1, 0 ), is( MazeConfig.STEP ) );
-		assertThat( maze.getCellConfig( 1, 1 ), is( MazeConfig.HOLE ) );
-		assertThat( maze.getCellConfig( 1, 2 ), is( MazeConfig.STEP ) );
-		assertThat( maze.getCellConfig( 2, 0 ), is( MazeConfig.STEP ) );
-		assertThat( maze.getCellConfig( 2, 1 ), is( MazeConfig.STEP ) );
-		assertThat( maze.getCellConfig( 2, 2 ), is( MazeConfig.COOKIE ) );
+		assertThat( maze.getWidth() ).isEqualTo( 3 );
+		assertThat( maze.getHeight() ).isEqualTo( 3 );
+		assertThat( maze.getCellConfig( 0, 0 ) ).isEqualTo( MazeConfig.STEP );
+		assertThat( maze.getCellConfig( 0, 1 ) ).isEqualTo( MazeConfig.STEP );
+		assertThat( maze.getCellConfig( 0, 2 ) ).isEqualTo( MazeConfig.STEP );
+		assertThat( maze.getCellConfig( 1, 0 ) ).isEqualTo( MazeConfig.STEP );
+		assertThat( maze.getCellConfig( 1, 1 ) ).isEqualTo( MazeConfig.HOLE );
+		assertThat( maze.getCellConfig( 1, 2 ) ).isEqualTo( MazeConfig.STEP );
+		assertThat( maze.getCellConfig( 2, 0 ) ).isEqualTo( MazeConfig.STEP );
+		assertThat( maze.getCellConfig( 2, 1 ) ).isEqualTo( MazeConfig.STEP );
+		assertThat( maze.getCellConfig( 2, 2 ) ).isEqualTo( MazeConfig.COOKIE );
 
 		// Check the initial runtime information
 		// There should be one visit where the cookie is
-		assertThat( maze.getX(), is( 2 ) );
-		assertThat( maze.getY(), is( 2 ) );
-		assertThat( maze.get( 2, 2 ), is( 1 ) );
+		assertThat( maze.getX() ).isEqualTo( 2 );
+		assertThat( maze.getY() ).isEqualTo( 2 );
+		assertThat( maze.get( 2, 2 ) ).isEqualTo( 1 );
 		// There should be no visits where there is a hole
-		assertThat( maze.get( 1, 1 ), is( -1 ) );
-		assertThat( maze.getDirection(), is( Direction.SOUTH ) );
+		assertThat( maze.get( 1, 1 ) ).isEqualTo( -1 );
+		assertThat( maze.getDirection() ).isEqualTo( Direction.SOUTH );
 	}
 
 	@Test
+	@SuppressWarnings( "ResultOfMethodCallIgnored" )
 	void testLoadWithError() {
 		asset.setModel( maze );
 
-		StringBuilder builder = new StringBuilder( "S 3 3\n" );
+		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder builder = new StringBuilder( "S 3 3\n" );
 		builder.append( "H 1 1\n" );
 		builder.append( "Z\n" );
 
@@ -107,7 +106,7 @@ public class MazeCodecTest extends BaseMazerTest {
 			fail( "Load should throw IOException but did not" );
 		} catch( IOException exception ) {
 			Throwable cause = exception.getCause();
-			assertThat( cause.getClass(), is( NumberFormatException.class ) );
+			assertThat( cause.getClass() ).isEqualTo( NumberFormatException.class );
 		}
 	}
 
