@@ -5,7 +5,6 @@ import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
 import com.avereon.skill.RunPauseResettable;
 import com.avereon.xenon.RbKey;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.UiFactory;
 import com.avereon.xenon.action.common.ResetAction;
