@@ -4,7 +4,7 @@ import com.avereon.product.Product;
 import com.avereon.product.Rb;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.RbKey;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import lombok.CustomLog;
 
 import java.util.Deque;
@@ -15,7 +15,7 @@ public class StackSolver extends MazeSolver {
 
 	private final Deque<State> stack = new LinkedBlockingDeque<>();
 
-	public StackSolver( Program program, Product product, MazeTool tool ) {
+	public StackSolver( Xenon program, Product product, MazeTool tool ) {
 		super( program, product, tool );
 	}
 

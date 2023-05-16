@@ -4,7 +4,7 @@ import com.avereon.product.Product;
 import com.avereon.product.Rb;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.RbKey;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import lombok.CustomLog;
 
 import java.util.Random;
@@ -14,7 +14,7 @@ public class WanderingSolver extends MazeSolver {
 
 	private final Random random = new Random();
 
-	public WanderingSolver( Program program, Product product, MazeTool editor ) {
+	public WanderingSolver( Xenon program, Product product, MazeTool editor ) {
 		super( program, product, editor );
 	}
 

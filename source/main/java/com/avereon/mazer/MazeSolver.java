@@ -1,7 +1,7 @@
 package com.avereon.mazer;
 
 import com.avereon.product.Product;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramTask;
 import com.avereon.zarra.javafx.Fx;
 
@@ -21,7 +21,7 @@ public abstract class MazeSolver extends ProgramTask<Void> {
 
 	private final Object stoplock = new Object();
 
-	public MazeSolver( Program program, Product product, MazeTool tool ) {
+	public MazeSolver( Xenon program, Product product, MazeTool tool ) {
 		super(program);
 		this.product = product;
 		this.tool = tool;

@@ -1,6 +1,6 @@
 package com.avereon.mazer;
 
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetException;
@@ -19,13 +19,13 @@ public class MazeAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
+	public boolean assetOpen( Xenon program, Asset asset ) throws AssetException {
 		asset.setModel( new Maze() );
 		return true;
 	}
 
 	@Override
-	public boolean assetNew( Program program, Asset asset ) throws AssetException {
+	public boolean assetNew( Xenon program, Asset asset ) throws AssetException {
 		return super.assetNew( program, asset );
 	}
 

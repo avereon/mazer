@@ -4,7 +4,7 @@ import com.avereon.product.Product;
 import com.avereon.product.Rb;
 import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.RbKey;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import lombok.CustomLog;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class SandbarSolver extends MazeSolver {
 
 	private int height;
 
-	public SandbarSolver( Program program, Product product, MazeTool tool ) {
+	public SandbarSolver( Xenon program, Product product, MazeTool tool ) {
 		super( program, product, tool );
 	}
 
