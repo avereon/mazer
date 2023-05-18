@@ -7,6 +7,7 @@ import com.avereon.skill.RunPauseResettable;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.UiFactory;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.action.common.ResetAction;
 import com.avereon.xenon.action.common.RunPauseAction;
 import com.avereon.xenon.asset.Asset;
@@ -88,7 +89,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	 * @param product The product associated with the tool
 	 * @param asset The asset the tool will work on
 	 */
-	public MazeTool( ProgramProduct product, Asset asset ) {
+	public MazeTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
 
