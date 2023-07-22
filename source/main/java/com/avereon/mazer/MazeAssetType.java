@@ -3,7 +3,7 @@ package com.avereon.mazer;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
-import com.avereon.xenon.asset.AssetException;
+import com.avereon.xenon.asset.exception.AssetException;
 import com.avereon.xenon.asset.AssetType;
 
 public class MazeAssetType extends AssetType {
