@@ -1,3 +1,5 @@
+import com.avereon.xenon.Module;
+
 module com.avereon.mazer {
 
 	// Compile-time only
@@ -15,6 +17,6 @@ module com.avereon.mazer {
 
 	exports com.avereon.mazer to com.avereon.xenon, com.avereon.zarra;
 
-	provides com.avereon.xenon.Mod with com.avereon.mazer.Mazer;
+	provides Module with com.avereon.mazer.Mazer;
 
 }

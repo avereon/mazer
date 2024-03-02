@@ -1,7 +1,7 @@
 package com.avereon.mazer;
 
 import com.avereon.product.Rb;
-import com.avereon.xenon.Mod;
+import com.avereon.xenon.Module;
 import com.avereon.xenon.ToolRegistration;
 import lombok.CustomLog;
 
@@ -11,7 +11,7 @@ import lombok.CustomLog;
  * demonstrates various capabilities and practices common to Xenon mods.
  */
 @CustomLog
-public class Mazer extends Mod {
+public class Mazer extends Module {
 
 	private final MazeAssetType mazeAssetType;
 
