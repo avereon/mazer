@@ -1,6 +1,5 @@
 package com.avereon.mazer;
 
-import com.avereon.product.Rb;
 import com.avereon.xenon.Module;
 import com.avereon.xenon.ToolRegistration;
 import lombok.CustomLog;
@@ -16,7 +15,6 @@ public class Mazer extends Module {
 	private final MazeAssetType mazeAssetType;
 
 	public Mazer() {
-		Rb.init( this );
 		mazeAssetType = new MazeAssetType( this );
 	}
 
