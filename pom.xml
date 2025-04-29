@@ -16,7 +16,7 @@
 
 	<groupId>com.avereon</groupId>
 	<artifactId>mazer</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	<packaging>jar</packaging>
 
 	<name>Mazer</name>
