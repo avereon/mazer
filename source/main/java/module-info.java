@@ -8,7 +8,7 @@ module com.avereon.mazer {
 	// Both compile-time and run-time
 	requires com.avereon.xenon;
 	requires com.avereon.zenna;
-	requires com.avereon.zarra;
+	requires com.avereon.zerra;
 	requires com.avereon.zevra;
 	requires javafx.controls;
 	requires javafx.graphics;

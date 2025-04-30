@@ -3,7 +3,7 @@ package com.avereon.mazer;
 import com.avereon.product.Product;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramTask;
-import com.avereon.zarra.javafx.Fx;
+import com.avereon.zerra.javafx.Fx;
 
 public abstract class MazeSolver extends ProgramTask<Void> {
 
