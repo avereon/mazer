@@ -15,7 +15,7 @@ module com.avereon.mazer {
 
 	opens com.avereon.mazer.bundles;
 
-	exports com.avereon.mazer to com.avereon.xenon, com.avereon.zarra;
+	exports com.avereon.mazer to com.avereon.xenon, com.avereon.zerra;
 
 	provides Module with com.avereon.mazer.Mazer;
 
