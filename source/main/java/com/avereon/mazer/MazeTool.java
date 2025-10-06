@@ -12,6 +12,7 @@ import com.avereon.xenon.action.common.ResetAction;
 import com.avereon.xenon.action.common.RunPauseAction;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.asset.ResourceManager;
 import com.avereon.zerra.javafx.Fx;
 import com.avereon.zerra.javafx.FxUtil;
 import javafx.beans.property.IntegerProperty;
@@ -161,7 +162,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	}
 
 	/**
-	 * Called from the {@link com.avereon.xenon.asset.AssetManager AssetManager}
+	 * Called from the {@link ResourceManager AssetManager}
 	 * when the asset is ready for use by the tool. It should not be assumed the
 	 * asset is ready when the tool constructor is called. Logic requiring the
 	 * asset to be ready should be called after this method has been called.
