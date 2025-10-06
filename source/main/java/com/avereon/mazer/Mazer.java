@@ -13,11 +13,11 @@ import lombok.CustomLog;
 @CustomLog
 public class Mazer extends Module {
 
-	private final MazeAssetType mazeAssetType;
+	private final MazeResourceType mazeAssetType;
 
 	public Mazer() {
 		Rb.init( this );
-		mazeAssetType = new MazeAssetType( this );
+		mazeAssetType = new MazeResourceType( this );
 	}
 
 	/**

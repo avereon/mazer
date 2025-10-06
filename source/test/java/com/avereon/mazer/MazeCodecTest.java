@@ -14,7 +14,7 @@ import static org.assertj.core.api.Fail.fail;
 
 public class MazeCodecTest extends BaseMazerTest {
 
-	private MazeAssetType assetType;
+	private MazeResourceType assetType;
 
 	private Maze maze;
 
@@ -23,7 +23,7 @@ public class MazeCodecTest extends BaseMazerTest {
 	@BeforeEach
 	void setup() {
 		Path path = Paths.get( "target", "maze.txt" );
-		assetType = new MazeAssetType( mazer );
+		assetType = new MazeResourceType( mazer );
 		asset = new Asset( assetType, path.toUri() );
 		maze = new Maze();
 	}

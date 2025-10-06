@@ -4,11 +4,11 @@ import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.exception.ResourceException;
-import com.avereon.xenon.asset.AssetType;
+import com.avereon.xenon.asset.ResourceType;
 
-public class MazeAssetType extends AssetType {
+public class MazeResourceType extends ResourceType {
 
-	public MazeAssetType( XenonProgramProduct product ) {
+	public MazeResourceType( XenonProgramProduct product ) {
 		super( product, "mazer" );
 		setDefaultCodec( new MazeCodec( product ) );
 	}
