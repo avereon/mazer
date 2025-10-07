@@ -2,7 +2,7 @@ package com.avereon.mazer;
 
 import com.avereon.product.Product;
 import com.avereon.product.Rb;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.Codec;
 import lombok.CustomLog;
 
@@ -43,13 +43,13 @@ public class MazeCodec extends Codec {
 	}
 
 	@Override
-	public void load( Asset asset, InputStream input ) throws IOException {
-		log.atDebug().log( "Loading maze: %s", asset );
+	public void load( Resource resource, InputStream input ) throws IOException {
+		log.atDebug().log( "Loading maze: %s", resource );
 
 		BufferedReader reader = new BufferedReader( new InputStreamReader( input, StandardCharsets.UTF_8 ) );
 
 		try {
-			Maze maze = asset.getModel();
+			Maze maze = resource.getModel();
 
 			String line;
 			while( (line = reader.readLine()) != null ) {
@@ -68,17 +68,17 @@ public class MazeCodec extends Codec {
 			}
 
 			maze.reset();
-			asset.setModel( maze );
+			resource.setModel( maze );
 		} catch( Exception exception ) {
 			throw new IOException( exception );
 		}
 	}
 
 	@Override
-	public void save( Asset asset, OutputStream output ) throws IOException {
-		log.atDebug().log( "Saving maze: %s", asset );
+	public void save( Resource resource, OutputStream output ) throws IOException {
+		log.atDebug().log( "Saving maze: %s", resource );
 		try {
-			Maze maze = asset.getModel();
+			Maze maze = resource.getModel();
 			int width = maze.getWidth();
 			int height = maze.getHeight();
 

@@ -1,6 +1,6 @@
 package com.avereon.mazer;
 
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,13 +18,13 @@ public class MazeCodecTest extends BaseMazerTest {
 
 	private Maze maze;
 
-	private Asset asset;
+	private Resource resource;
 
 	@BeforeEach
 	void setup() {
 		Path path = Paths.get( "target", "maze.txt" );
 		assetType = new MazeResourceType( mazer );
-		asset = new Asset( assetType, path.toUri() );
+		resource = new Resource( assetType, path.toUri() );
 		maze = new Maze();
 	}
 
@@ -35,9 +35,9 @@ public class MazeCodecTest extends BaseMazerTest {
 		maze.setCellConfig( 2, 1, MazeConfig.MONSTER );
 		maze.setCookieStart( 0, 2 );
 		maze.setStartDirection( Direction.NORTH );
-		asset.setModel( maze );
+		resource.setModel( maze );
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		assetType.getDefaultCodec().save( asset, output );
+		assetType.getDefaultCodec().save( resource, output );
 
 		String content = new String( output.toByteArray(), StandardCharsets.UTF_8 );
 
@@ -52,7 +52,7 @@ public class MazeCodecTest extends BaseMazerTest {
 
 	@Test
 	void testLoad() throws Exception {
-		asset.setModel( maze );
+		resource.setModel( maze );
 
 		StringBuilder builder = new StringBuilder( "S 3,3\n" );
 		builder.append( "H 1,1\n" );
@@ -62,8 +62,8 @@ public class MazeCodecTest extends BaseMazerTest {
 		String content = builder.toString();
 
 		InputStream input = new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) );
-		assetType.getDefaultCodec().load( asset, input );
-		maze = asset.getModel();
+		assetType.getDefaultCodec().load( resource, input );
+		maze = resource.getModel();
 
 		// Check the maze configuration
 		assertThat( maze.getWidth() ).isEqualTo( 3 );
@@ -91,7 +91,7 @@ public class MazeCodecTest extends BaseMazerTest {
 	@Test
 	@SuppressWarnings( "ResultOfMethodCallIgnored" )
 	void testLoadWithError() {
-		asset.setModel( maze );
+		resource.setModel( maze );
 
 		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder builder = new StringBuilder( "S 3 3\n" );
 		builder.append( "H 1 1\n" );
@@ -101,8 +101,8 @@ public class MazeCodecTest extends BaseMazerTest {
 
 		InputStream input = new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) );
 		try {
-			assetType.getDefaultCodec().load( asset, input );
-			maze = asset.getModel();
+			assetType.getDefaultCodec().load( resource, input );
+			maze = resource.getModel();
 			fail( "Load should throw IOException but did not" );
 		} catch( IOException exception ) {
 			Throwable cause = exception.getCause();

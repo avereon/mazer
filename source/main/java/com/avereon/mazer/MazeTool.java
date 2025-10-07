@@ -10,7 +10,7 @@ import com.avereon.xenon.UiFactory;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.action.common.ResetAction;
 import com.avereon.xenon.action.common.RunPauseAction;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.ResourceManager;
 import com.avereon.zerra.javafx.Fx;
@@ -88,10 +88,10 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	 * </p>
 	 *
 	 * @param product The product associated with the tool
-	 * @param asset The asset the tool will work on
+	 * @param resource The asset the tool will work on
 	 */
-	public MazeTool( XenonProgramProduct product, Asset asset ) {
-		super( product, asset );
+	public MazeTool( XenonProgramProduct product, Resource resource ) {
+		super( product, resource );
 		this.zoom = new SimpleIntegerProperty( DEFAULT_ZOOM );
 
 		resetAction = new com.avereon.xenon.action.common.ResetAction( product.getProgram(), this );
@@ -172,7 +172,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	 */
 	@Override
 	protected void ready( OpenAssetRequest request ) {
-		setTitle( getAsset().getName() );
+		setTitle( getResource().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( "mazer" ) );
 
 		getMaze().register( NodeEvent.NODE_CHANGED, modelChangeHandler );
@@ -193,7 +193,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 		pushAction( "reset", resetAction );
 		pushAction( "runpause", runAction );
 		pushTools( "reset runpause" );
-		if( getAsset().isLoaded() ) runAction.setState( getSolver().isRunning() ? "pause" : "run" );
+		if( getResource().isLoaded() ) runAction.setState( getSolver().isRunning() ? "pause" : "run" );
 	}
 
 	/**
@@ -217,7 +217,7 @@ public class MazeTool extends ProgramTool implements RunPauseResettable {
 	}
 
 	private Maze getMaze() {
-		return (Maze)getAsset().getModel();
+		return (Maze)getResource().getModel();
 	}
 
 	/**
